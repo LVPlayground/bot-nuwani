@@ -1,0 +1,12 @@
+4871AF - Invalid second actor given for CRunningScript::IsActorNearActor() (samp scm)
+489914 - Invalid player for SetPlayerSingleFreeTreatment (gta scm)?
+7F0BF7 - Invalid upgrade for this vehicle (e.g. NOS or spoilers) - block invalid vehicles.
+7F120E - Related to invalid vehicle components, might not be NOS (CRunningScript::AddVehicleComponent).
+4D1750 - Invalid animation processing, some peds cannot do specific animations.
+534134 - Invalid collision model or model index in CEntity::GetBoundRect. Needs stack for more info
+533EA9 - No collision model available (CEntity::CreateRwObject, needs the stack)
+7F7C82 - rwD3D9CameraClear, very weird crash - needs the stack.
+4AA4CB - Related to particle effects, needs the stack to emphasise on the reason.
+4AB01A - Invalid entity for a certain particle effect, likely NOS on a deleted vehicle.
+8E49EB - String "MODELS\PLAYER.IMG", needs the stacktrace for more information.
+53388E - RenderWare material morphing, rarely used, also needs the stack.
