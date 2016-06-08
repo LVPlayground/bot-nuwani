@@ -174,8 +174,8 @@ class BanManager {
     }
     
     // Usage i.e. BanIp('127.0.0.2', 'OmgCheater', 'Russell', 'Y U CHIT?');
-    public static function BanIp($address, $username, $administrator, $reason) {
-        self::createEntry(self::BanEntry, $username, $administrator, $reason, $address, $address, time() + self::DefaultBanDuration);
+    public static function BanIp($address, $username, $administrator, $duration, $reason) {
+        self::createEntry(self::BanEntry, $username, $administrator, $reason, $address, $address, time() + ($duration / 86400));
     }
     
     // Usage i.e. UnbanIp('127.0.0.7', 'Russell', 'He has been nice.');

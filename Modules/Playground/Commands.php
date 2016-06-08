@@ -575,23 +575,19 @@ class Commands {
         }
     }
 
-    // !banip [ipAddress] [playerName] [reason]
+    // !banip [ipAddress] [playerName] [duration] [reason]
     private static function OnBanIpAddressCommand(Bot $bot, $parameters, $channel, $nickname) {
-        if (count($parameters) < 3) {
-            CommandHelper::usageMessage($bot, $channel, '!banip [ipAddress] [playerName] [reason]');
+        if (count($parameters) < 4) {
+            CommandHelper::usageMessage($bot, $channel, '!banip [ipAddress] [playerName] [duration] [reason]');
             return;
         }
 
         $ipAddress = array_shift($parameters);
         $playerName = array_shift($parameters);
+        $duration = array_shift($parameters);
         $reason = implode(' ', $parameters);
 
-        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false) {
-            CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
-            return;
-        }
-
-        if ($ipAddress == '127.0.0.1') {
+        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $ipAddress == '127.0.0.1') {
             CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
             return;
         }
@@ -601,15 +597,20 @@ class Commands {
             return;
         }
 
+        if (!is_numeric($duration) || intval($duration, 10) < 1) {
+            CommandHelper::errorMessage($bot, $channel, 'The duration should be given in number of days.');
+            return;
+        }
+
         if (strlen($reason) < 5) {
             CommandHelper::errorMessage($bot, $channel, 'The reason needs to be at least 5 characters.');
             return;
         }
 
-        BanManager::BanIp($ipAddress, $playerName, $nickname, $reason);
+        BanManager::BanIp($ipAddress, $playerName, $nickname, $duration, $reason);
         Playground::sendIngameCommand('reloadbans');
 
-        CommandHelper::infoMessage($bot, $channel, 'The IP address ' . $ipAddress . ' has been banned.');
+        CommandHelper::infoMessage($bot, $channel, 'The IP address ' . $ipAddress . ' (' . $playerName . ') has been banned, for ' . $duration . ' days.');
     }
 
     // !why [playerName]
@@ -638,7 +639,7 @@ class Commands {
             if ($key === 'total_results')
                 continue;
 
-            $banDuration = $logEntry['duration'] / 86400 /* seconds in a day */ > 1 ? round($logEntry['duration'] / 86400, 1) : 0;
+            $banDuration = $logEntry['duration'] / 86400 /* seconds in a day */ > 1 ? round($logEntry['duration'] / 86400) : 0;
             CommandHelper::channelMessage($bot, $channel, '4[' . $logEntry['date'] . '] 3(' . $logEntry['type']
                 . ' by ' . $logEntry['admin'] . '): ' . trim($logEntry['message'])
                 . ($banDuration > 0 ? ' 5(Duration: ' .  $banDuration . ' days)' : '')
