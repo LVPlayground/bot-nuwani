@@ -600,7 +600,8 @@ class Commands {
         if (!is_numeric($duration) || intval($duration, 10) < 1) {
             CommandHelper::errorMessage($bot, $channel, 'The duration should be given in number of days.');
             return;
-        }
+        } else
+            $duration = intval($duration, 10);
 
         if (strlen($reason) < 5) {
             CommandHelper::errorMessage($bot, $channel, 'The reason needs to be at least 5 characters.');
@@ -610,7 +611,7 @@ class Commands {
         BanManager::BanIp($ipAddress, $playerName, $nickname, $duration, $reason);
         Playground::sendIngameCommand('reloadbans');
 
-        CommandHelper::infoMessage($bot, $channel, 'The IP address ' . $ipAddress . ' (' . $playerName . ') has been banned, for ' . $duration . ' days.');
+        CommandHelper::infoMessage($bot, $channel, 'The IP address ' . $ipAddress . ' (' . $playerName . ') has been banned, for ' . $duration . ' day(s).');
     }
 
     // !why [playerName]
@@ -639,10 +640,10 @@ class Commands {
             if ($key === 'total_results')
                 continue;
 
-            $banDuration = $logEntry['duration'] / 86400 /* seconds in a day */ > 1 ? round($logEntry['duration'] / 86400) : 0;
+            $banDuration = round($logEntry['duration'] / 86400) /* seconds in a day */ > 0 ? round($logEntry['duration'] / 86400) : 0;
             CommandHelper::channelMessage($bot, $channel, '4[' . $logEntry['date'] . '] 3(' . $logEntry['type']
                 . ' by ' . $logEntry['admin'] . '): ' . trim($logEntry['message'])
-                . ($banDuration > 0 ? ' 5(Duration: ' .  $banDuration . ' days)' : '')
+                . ($banDuration > 0 ? ' 5(Duration: ' .  $banDuration . ' day(s))' : '')
                 . (strlen($logEntry['ip']) > 0 ? ' 14(IP: ' . $logEntry['ip'] . ')' : ''));
         }
     }
