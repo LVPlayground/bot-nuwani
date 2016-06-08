@@ -984,7 +984,7 @@ class Commands {
             return;
         }
 
-        asort($supported);
+        ksort($supported);
         foreach (array_chunk(array_keys($supported), 25) as $columns)
             $bot->send('PRIVMSG ' . $channel . ' :5Supported fields: ' . implode(', ', $columns));
     }
@@ -1003,6 +1003,9 @@ class Commands {
                 if (self::IsColumnImmutable($row['Field']))
                     continue; // this field may not be updated through Nuwani.
 
+                if (self::IsColumnDeprecated($row['Field']))
+                    continue; // this field is no longer supported.
+
                 if ($level < UserStatus::IsProtected && self::IsColumnLimitedToProtectedChannelOperators($row['Field']))
                     continue; // this field may only be updated by Management members.
 
@@ -1015,20 +1018,34 @@ class Commands {
 
     // Utility function to determine whether a certain field is only writable for the Management.
     private static function IsColumnLimitedToProtectedChannelOperators($column) {
-        return $column == 'validated' ||
+        return $column == 'last_ip' ||
                $column == 'level' ||
+               $column == 'validated';
+    }
+
+    // Utility function to determine whether a certain field is no longer supported by the gamemode.
+    private static function IsColumnDeprecated($column) {
+        return $column == 'clock' ||
+               $column == 'clock_tz' ||
+               $column == 'color' ||
+               $column == 'money_bank_limit' ||
+               $column == 'message_flags' ||
+               $column == 'platinum_account' ||
+               $column == 'platinum_earnings' ||
+               $column == 'plus_points' ||
+               $column == 'pro_account' ||
                $column == 'is_vip' ||
-               $column == 'is_vip_mod' ||
-               $column == 'last_ip';
+               $column == 'is_vip_mod';
     }
 
     // Utility function to determine whether a certain field cannot be changed at all.
     private static function IsColumnImmutable($column) {
-        return $column == 'user_id' ||
+        return $column == 'password' ||
+               $column == 'password_salt' ||
+               $column == 'settings' ||
                $column == 'updated' ||
-               $column == 'username' ||
-               $column == 'password' ||
-               $column == 'password_salt';
+               $column == 'user_id' ||
+               $column == 'username';
     }
 
     // Utility function to determine what the type of data is expected for this column. There are four
