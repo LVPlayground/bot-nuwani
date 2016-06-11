@@ -567,6 +567,11 @@ class Commands {
 
         $ipAddress = array_shift($parameters);
 
+        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $ipAddress == '127.0.0.1') {
+            CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
+            return;
+        }
+
         $result = BanManager::FindBannedIp($ipAddress);
         if ($result === false) {
             CommandHelper::infoMessage($bot, $channel, 'The IP address ' . $ipAddress . ' is currently not banned.');
