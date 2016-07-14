@@ -78,7 +78,7 @@ $format = array(
     // [joinipgpci] playerId playerIp playerName playerGpci
     array(
         'match'     => '/^\[joinipgpci\] (\d+) ([^\s]+) ([^\s]+) ([^\s]+)$/',
-        'format'    => '4IP Address \3 (Id:\1): \2 / Serial: \3',
+        'format'    => '4IP Address \3 (Id:\1): \2 / Serial: \4',
         'prefix'    => '%'
     ),
 
