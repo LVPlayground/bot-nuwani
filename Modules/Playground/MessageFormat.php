@@ -75,10 +75,10 @@ $format = array(
         }
     ),
 
-    // [joinip] playerId ip playerName
+    // [joinipgpci] playerId playerIp playerName playerGpci
     array(
-        'match'     => '/^\[joinip\] (\d+) ([^\s]+) ([^\s]+)$/',
-        'format'    => '4IP Address \3 (Id:\1): \2',
+        'match'     => '/^\[joinipgpci\] (\d+) ([^\s]+) ([^\s]+) ([^\s]+)$/',
+        'format'    => '4IP Address \3 (Id:\1): \2 / Serial: \3',
         'prefix'    => '%'
     ),
 
@@ -189,7 +189,7 @@ $format = array(
             $bot = \ Nuwani \ BotManager::getInstance()->offsetGet('master');
             if ($bot instanceof \ Nuwani \ BotGroup)
                 $bot = $bot->current();
-            
+
             if ($bot instanceof \ Nuwani \ Bot)
                 $bot->send('NOTICE ' . $matches[3] . ' :07PM from 05' . $matches[2] . ' 07(' . $matches[1] . '): ' . $matches[4]);
 
