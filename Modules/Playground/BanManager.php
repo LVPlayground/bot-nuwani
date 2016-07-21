@@ -187,12 +187,12 @@ class BanManager {
     public static function BanGpci($gpcihash, $username, $administrator, $duration, $reason) {
         self::createEntry(self::BanEntry, $username, $administrator, $reason, $gpcihash, $gpcihash, time() + ($duration * 86400));
     }
-	
+
 	// Usage i.e. UnbanIp('127.0.0.2', 'Russell', 'He has been nice.');
 	public static function UnbanIp($address, $administrator, $note) {
 		self::UnbanPlayer($address, $administrator, $note);
 	}
-	
+
 	// Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
 	public static function UnbanGpci($gpci, $administrator, $note) {
 		self::UnbanPlayer($gpci, $administrator, $note);
@@ -206,7 +206,7 @@ class BanManager {
         if (!$existingBan) {
             return null;
         }
-		
+
 		if (!is_numeric($unbanValue) && strlen($unbanValue) < 10)
 			$whereBanValue = '(ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))';
 		else
@@ -223,12 +223,12 @@ class BanManager {
                 log_type = "ban" AND
                 ban_expiration_date > NOW() AND
                 ' . $whereBanValue);
-		
-		if (!is_numeric($unbanValue) && strlen($unbanValue) < 10)	
+
+		if (!is_numeric($unbanValue) && strlen($unbanValue) < 10)
 			$statement->bind_param('ss', $unbanValue, $unbanValue);
 		else
 			$statement->bind_param('s', $unbanValue);
-		
+
         $statement->execute();
 
         self::createEntry(self::UnbanEntry, $existingBan['player'], $administrator, $note);
@@ -265,19 +265,35 @@ class BanManager {
         $userProfile = LVP::findProfileByNickname($username);
         $adminProfile = LVP::findProfileByNickname($administrator);
 
+        $columnsToFill = 'ban_ip_range_start, ban_ip_range_end';
+        $valuesForQuery = 'INET_ATON(?), INET_ATON(?)';
+        $isIpEntry = true;
+
+        if ($rangeEnd == $rangeStart && is_numeric($rangeStart) && strlen($rangeStart) >= 10) {
+            $columnsToFill = 'gpci';
+            $valuesForQuery = '?';
+            $isIpEntry = false;
+        }
+
         $database = Database::instance();
         $statement = $database->prepare(
             'INSERT INTO logs (
-                log_date, log_type, ban_ip_range_start, ban_ip_range_end, ban_expiration_date,
+                log_date, log_type, ' . $columnsToFill . ', ban_expiration_date,
                 user_nickname, user_id, subject_nickname, subject_user_id, description
             )
             VALUES (
-                NOW(), ?, INET_ATON(?), INET_ATON(?), FROM_UNIXTIME(?), ?, ?, ?, ?, ?
+                NOW(), ?, ' . $valuesForQuery .  ', FROM_UNIXTIME(?), ?, ?, ?, ?, ?
             )');
         $userId = $userProfile->exists() ? $userProfile['user_id'] : 0;
         $adminId = $adminProfile->exists() ? $adminProfile['user_id'] : 0;
-        $statement->bind_param('sssssisis', $type, $rangeStart, $rangeEnd, $expirationDate,
-            $administrator, $adminId, $username, $userId, $message);
+
+        if ($isIpEntry)
+            $statement->bind_param('sssssisis', $type, $rangeStart, $rangeEnd, $expirationDate,
+                $administrator, $adminId, $username, $userId, $message);
+        else
+            $statement->bind_param('ssssisis', $type, $rangeStart, $expirationDate,
+                $administrator, $adminId, $username, $userId, $message);
+
         $statement->execute();
         $statement->close();
     }
