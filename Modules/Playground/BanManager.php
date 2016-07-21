@@ -48,9 +48,9 @@ class BanManager {
         $database = Database::instance();
 
         $queryTemplate = 'SELECT %s FROM logs WHERE %s ORDER BY log_date DESC %s';
-        $columns = 'log_id, log_date, log_type,
-            user_nickname, user_id, subject_nickname, subject_user_id,
-            ban_ip_range_start, ban_ip_range_end, ban_expiration_date, description';
+        $columns = 'log_id, log_date, log_type, user_nickname, user_id,
+            subject_nickname, subject_user_id, ban_ip_range_start,
+            ban_ip_range_end, ban_expiration_date, description, gpci';
         $filter = 'subject_nickname = "' . $database->real_escape_string($nickname) . '"';
         if ($profile->exists()) {
             $filter .= ' OR subject_user_id = ' . (int) $profile['user_id'];
@@ -77,7 +77,8 @@ class BanManager {
                 'admin'     => $row['user_nickname'],
                 'player'    => $row['subject_nickname'],
                 'message'   => trim($row['description']),
-                'ip'        => self::formatIpAddressRange($row['ban_ip_range_start'], $row['ban_ip_range_end'])
+                'ip'        => self::formatIpAddressRange($row['ban_ip_range_start'], $row['ban_ip_range_end']),
+                'gpci'      => $row['gpci']
             );
         }
 
@@ -85,41 +86,44 @@ class BanManager {
 
         return $result;
     }
-    
+
     // Usage i.e. BanManager::AddEntryForPlayer('OmgCheater', 'Russell', BanManager::BanEntry, 'Bad polski!');
     public static function AddEntryForPlayer($username, $administrator, $type, $message) {
         self::createEntry($type, $username, $administrator, $message);
     }
 
-    // Usage i.e. BanManager::FindBannedIp('192.168.1.2');
-    // 
+    // Usage i.e. BanManager::FindBannedPlayer('192.168.1.2');
+	// Usage i.e. BanManager::FindBannedPlayer(28459764398);
+    //
     // Returns false in case of no result, otherwise an array with information
     // about the ban in the same format as GetRecentBans().
-    public static function FindBannedIp($address) {
+    public static function FindBannedPlayer($bannedByValue) {
         $database = Database::instance();
         $statement = $database->prepare(
             'SELECT
-                log_date, ban_ip_range_start, ban_ip_range_end, ban_expiration_date,
+                log_date, ban_ip_range_start, ban_ip_range_end, gpci, ban_expiration_date, 
                 user_nickname, user_id, subject_nickname, subject_user_id, description
             FROM
                 logs
             WHERE
                 log_type = "ban" AND
                 ban_expiration_date > NOW() AND
-                (ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))
+                ((ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?)) OR
+                gpci = ?)
             ORDER BY
                 log_date DESC
             LIMIT 1');
-        $statement->bind_param('ss', $address, $address);
+        $statement->bind_param('sss', $bannedByValue, $bannedByValue, $bannedByValue);
         $result = array();
         $statement->bind_result($result['log_date'], $result['ban_ip_range_start'], $result['ban_ip_range_end'],
-            $result['ban_expiration_date'], $result['user_nickname'], $result['user_id'],
+			$result['gpci'], $result['ban_expiration_date'], $result['user_nickname'], $result['user_id'],
             $result['subject_nickname'], $result['subject_user_id'], $result['description']);
         $statement->execute();
 
         if ($statement->fetch()) {
             return array(
-                'ip'                    => self::formatIpAddressRange($result['ban_ip_range_start'], $result['ban_ip_range_end']),
+				'ip'                    => self::formatIpAddressRange($result['ban_ip_range_start'], $result['ban_ip_range_end']),
+				'gpci'                  => $result['gpci'],
                 'date'                  => $result['log_date'],
                 'expiration_date'       => $result['ban_expiration_date'],
                 'player'                => $result['subject_nickname'],
@@ -132,7 +136,7 @@ class BanManager {
 
         return false;
     }
-    
+
     // Usage i.e. BanManager::GetRecentBans(5); to get the last five bans.
     //
     // Returns a two dimensional array, with each array in this format:
@@ -145,7 +149,7 @@ class BanManager {
         $database = Database::instance();
         $query = $database->query(
             'SELECT
-                log_date, ban_ip_range_start, ban_ip_range_end, ban_expiration_date,
+                log_date, ban_ip_range_start, ban_ip_range_end, gpci, ban_expiration_date,
                 user_nickname, user_id, subject_nickname, subject_user_id, description
             FROM
                 logs
@@ -159,7 +163,8 @@ class BanManager {
         $result = array();
         while ($query !== false && $row = $query->fetch_assoc()) {
             $result[] = array(
-                'ip'                    => self::formatIpAddressRange($row['ban_ip_range_start'], $row['ban_ip_range_end']),
+				'ip'                    => self::formatIpAddressRange($row['ban_ip_range_start'], $row['ban_ip_range_end']),
+				'gpci'                  => $row['gpci'],
                 'date'                  => $row['log_date'],
                 'expiration_date'       => $row['ban_expiration_date'],
                 'player'                => $row['subject_nickname'],
@@ -172,31 +177,58 @@ class BanManager {
 
         return $result;
     }
-    
+
     // Usage i.e. BanIp('127.0.0.2', 'OmgCheater', 'Russell', 'Y U CHIT?');
     public static function BanIp($address, $username, $administrator, $duration, $reason) {
         self::createEntry(self::BanEntry, $username, $administrator, $reason, $address, $address, time() + ($duration * 86400));
     }
-    
-    // Usage i.e. UnbanIp('127.0.0.7', 'Russell', 'He has been nice.');
-    public static function UnbanIp($address, $administrator, $note) {
-        $existingBan = self::FindBannedIp($address);
+
+    // Usage i.e. BanGpci(28459764398, 'OmgCheater', 'Russell', 'Y U CHIT?');
+    public static function BanGpci($gpcihash, $username, $administrator, $duration, $reason) {
+        self::createEntry(self::BanEntry, $username, $administrator, $reason, $gpcihash, $gpcihash, time() + ($duration * 86400));
+    }
+	
+	// Usage i.e. UnbanIp('127.0.0.2', 'Russell', 'He has been nice.');
+	public static function UnbanIp($address, $administrator, $note) {
+		self::UnbanPlayer($address, $administrator, $note);
+	}
+	
+	// Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
+	public static function UnbanGpci($gpci, $administrator, $note) {
+		self::UnbanPlayer($gpci, $administrator, $note);
+	}
+
+    // Usage i.e. UnbanPlayer('127.0.0.2', 'Russell', 'He has been nice.');
+	// or
+	// Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
+	private static function UnbanPlayer($unbanValue, $administrator, $note) {
+		$existingBan = self::FindBannedPlayer($unbanValue);
         if (!$existingBan) {
             return null;
         }
+		
+		if (!is_numeric($unbanValue) && strlen($unbanValue) < 10)
+			$whereBanValue = '(ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))';
+		else
+			$whereBanValue = 'gpci = ?';
 
         // Unban a player by setting ban_expiration_date to NOW()
         $database = Database::instance();
         $statement = $database->prepare(
-            'UPDATE
+			'UPDATE
                 logs
             SET
                 ban_expiration_date = NOW()
             WHERE
                 log_type = "ban" AND
                 ban_expiration_date > NOW() AND
-                (ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))');
-        $statement->bind_param('ss', $address, $address);
+                ' . $whereBanValue);
+		
+		if (!is_numeric($unbanValue) && strlen($unbanValue) < 10)	
+			$statement->bind_param('ss', $unbanValue, $unbanValue);
+		else
+			$statement->bind_param('s', $unbanValue);
+		
         $statement->execute();
 
         self::createEntry(self::UnbanEntry, $existingBan['player'], $administrator, $note);

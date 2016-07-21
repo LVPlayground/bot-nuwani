@@ -565,18 +565,31 @@ class Commands {
             return;
         }
 
-        $ipAddress = array_shift($parameters);
+        $possibleBanValue = array_shift($parameters);
 
-        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $ipAddress == '127.0.0.1') {
-            CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
-            return;
+        $isIpSearch = true;
+        if (filter_var($possibleBanValue, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $possibleBanValue == '127.0.0.1') {
+            //// Welp, perhaps a serial(hash)?
+            //if (!is_numeric($possibleBanValue) && strlen($possibleBanValue) < 10) {
+            //    CommandHelper::errorMessage($bot, $channel, 'Invalid serial given.');
+            //    return;
+            //}
+            //else
+				$isIpSearch = false;
+
+            if (!$isIpSearch) {
+                CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
+                return;
+            }
         }
 
-        $result = BanManager::FindBannedIp($ipAddress);
+        $result = BanManager::FindBannedPlayer($possibleBanValue);
+        $ipOrSerialHash = $isIpSearch ? 'IP address' : 'serial hash';
         if ($result === false) {
-            CommandHelper::infoMessage($bot, $channel, 'The IP address ' . $ipAddress . ' is currently not banned.');
+            CommandHelper::infoMessage($bot, $channel, 'The ' . $ipOrSerialHash . ' ' . $possibleBanValue . ' is currently not banned.');
         } else {
-            CommandHelper::infoMessage($bot, $channel, 'The IP address ' . $ipAddress . ' is currently banned: ' . $result['player'] . ' (' . $result['ip'] . '), reason: ' . $result['message']);
+            $bannedValue = $isIpSearch ? $result['ip'] : $result['gpci'];
+            CommandHelper::infoMessage($bot, $channel, 'The ' . $ipOrSerialHash . ' ' . $possibleBanValue . ' is currently banned: ' . $result['player'] . ' (' . $bannedValue . '), reason: ' . $result['message']);
         }
     }
 
