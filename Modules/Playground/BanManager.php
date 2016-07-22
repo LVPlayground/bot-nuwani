@@ -236,6 +236,20 @@ class BanManager {
         return $existingBan;
     }
 
+    //// Public helper methods ////
+
+    public static function IsValidForGetBanValueType ($banValue) {
+        if (filter_var($banValue, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $banValue == '127.0.0.1') {
+            if (strpos ($banValue, '.'))
+                return 'IP address';
+
+            if (!is_numeric($banValue) && strlen($banValue) < 10)
+                return 'serial';
+        }
+
+        return true;
+    }
+
     //// Private helper methods ////
 
     private static function formatDate($date) {

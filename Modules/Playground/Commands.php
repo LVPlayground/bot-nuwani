@@ -553,21 +553,11 @@ class Commands {
             $note = 'Unbanned';
         }
 
-        $isIpSearch = true;
-        if (filter_var($banValue, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $banValue == '127.0.0.1') {
-            // Welp, perhaps a serial(hash)?
-            if (!is_numeric($banValue) && strlen($banValue) < 10) {
-                CommandHelper::errorMessage($bot, $channel, 'Invalid serial given.');
-                return;
-            }
-            else
-                $isIpSearch = false;
-
-            if (!$isIpSearch) {
-                CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
-                return;
-            }
+        if (!$banValueType = BanManager::IsValidForGetBanValueType($banValue)) {
+            CommandHelper::errorMessage($bot, $channel, 'Invalid ' . $banValueType . ' given.');
+            return false;
         }
+        $isIpSearch = $banValueType && strpos($banValueType, '.');
 
         if ($isIpSearch) {
             $unbanType = 'IP address';
@@ -595,21 +585,11 @@ class Commands {
 
         $banValue = array_shift($parameters);
 
-        $isIpSearch = true;
-        if (filter_var($banValue, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $banValue == '127.0.0.1') {
-            // Welp, perhaps a serial(hash)?
-            if (!is_numeric($banValue) && strlen($banValue) < 10) {
-                CommandHelper::errorMessage($bot, $channel, 'Invalid serial given.');
-                return;
-            }
-            else
-				$isIpSearch = false;
-
-            if (!$isIpSearch) {
-                CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
-                return;
-            }
+        if (!$banValueType = BanManager::IsValidForGetBanValueType($banValue)) {
+            CommandHelper::errorMessage($bot, $channel, 'Invalid ' . $banValueType . ' given.');
+            return false;
         }
+        $isIpSearch = $banValueType && strpos($banValueType, '.');
 
         $result = BanManager::FindBannedPlayer($banValue);
         $ipOrSerialHash = $isIpSearch ? 'IP address' : 'serial hash';
@@ -1397,20 +1377,9 @@ class Commands {
 
     // Utility function to check for valid parameters in the banip/-serial cmd
     private static function AreGivenBanParametersValid($bot, $channel, $banValue, $playerName, $duration, $reason) {
-        $isIpSearch = true;
-        if (filter_var($banValue, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $banValue == '127.0.0.1') {
-            // Welp, perhaps a serial(hash)?
-            if (!is_numeric($banValue) && strlen($banValue) < 10) {
-                CommandHelper::errorMessage($bot, $channel, 'Invalid serial given.');
-                return false;
-            }
-            else
-                $isIpSearch = false;
-
-            if (!$isIpSearch) {
-                CommandHelper::errorMessage($bot, $channel, 'Invalid IP address given.');
-                return false;
-            }
+        if (!$banValueType = BanManager::IsValidForGetBanValueType($banValue)) {
+            CommandHelper::errorMessage($bot, $channel, 'Invalid ' . $banValueType . ' given.');
+            return false;
         }
 
         if (strlen($playerName) < 3) {
