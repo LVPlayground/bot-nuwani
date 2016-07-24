@@ -18,10 +18,12 @@ namespace Playground;
 
 use \ LVP;
 use \ ModuleBase;
+use MurmurHash3;
 use \ Nuwani;
 use \ Nuwani \ Bot;
 use \ Nuwani \ BotManager;
 use \ Playground;
+use GpciManager;
 use \ UserStatus;
 
 class Commands {
@@ -217,6 +219,11 @@ class Commands {
             case 'aliases':
                 if ($userLevel >= UserStatus::IsOperator)
                     self::OnAliasesCommand($bot, $parameters, $channel, $nickname);
+                return true;
+
+            case 'serialinfo':
+                if ($userLevel >= UserStatus::IsOperator)
+                    self::OnSerialInfoCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
             // -----------------------------------------------------------------
@@ -1321,6 +1328,25 @@ class Commands {
         $bot->send('PRIVMSG ' . $channel . ' :07Aliases of 05' . $player['username'] . ': ' . implode(', ', $player->listNicknames()));
     }
 
+    // !serialinfo serial/nickname/IP address
+    private static function OnSerialInfoCommand($bot, $parameters, $channel, $nickname) {
+        if (count($parameters) != 1) {
+            CommandHelper::usageMessage($bot, $channel, '!serialinfo serial/nickname/IP address');
+            return;
+        }
+
+        if (GpciManager::IsValidHashedGpci($parameters[0])) {
+
+        } else if (GpciManager::IsValidGpci($parameters[0])) {
+            $parameters[0] = MurmurHash3::generateHash($parameters[0]);
+
+            self::OnSerialInfoCommand($bot, $parameters, $channel, $nickname);
+        } else if (BanManager::IsValidIpv4Address($parameters[0])) {
+
+        } else { // Nickname it is
+
+        }
+    }
     // !addalias Nickname Alias
     private static function OnAddAliasCommand($bot, $parameters, $channel, $nickname) {
         if (count($parameters) != 2) {

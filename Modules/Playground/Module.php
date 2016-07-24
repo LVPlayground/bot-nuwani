@@ -22,6 +22,8 @@ use Nuwani \ ModuleManager;
 require_once __DIR__ . '/BanManager.php';
 require_once __DIR__ . '/CommandHelper.php';
 require_once __DIR__ . '/TargetChannel.php';
+require_once __DIR__ . '/GpciManager.php';
+require_once __DIR__ . '/MurmurHash3.php';
 require_once __DIR__ . '/Commands.php';
 require_once __DIR__ . '/LVP.php';
 require_once __DIR__ . '/MessageFeed.php';

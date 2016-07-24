@@ -239,7 +239,7 @@ class BanManager {
     //// Public helper methods ////
 
     public static function IsValidForGetBanValueType ($banValue) {
-        if (filter_var($banValue, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false || $banValue == '127.0.0.1') {
+        if (!self::IsValidIpv4Address($banValue)) {
             if (strpos ($banValue, '.'))
                 return 'IP address';
 
@@ -248,6 +248,13 @@ class BanManager {
         }
 
         return true;
+    }
+
+    public static function IsValidIpv4Address (string $ip) {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false && $ip != '127.0.0.1')
+            return true;
+
+        return false;
     }
 
     //// Private helper methods ////
