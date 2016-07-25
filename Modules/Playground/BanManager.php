@@ -207,7 +207,7 @@ class BanManager {
             return null;
         }
 
-		if (!is_numeric($unbanValue) && strlen($unbanValue) < 10)
+		if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
 			$whereBanValue = '(ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))';
 		else
 			$whereBanValue = 'gpci = ?';
@@ -224,7 +224,7 @@ class BanManager {
                 ban_expiration_date > NOW() AND
                 ' . $whereBanValue);
 
-		if (!is_numeric($unbanValue) && strlen($unbanValue) < 10)
+		if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
 			$statement->bind_param('ss', $unbanValue, $unbanValue);
 		else
 			$statement->bind_param('s', $unbanValue);
@@ -243,7 +243,7 @@ class BanManager {
             if (strpos ($banValue, '.'))
                 return 'IP address';
 
-            if (!is_numeric($banValue) && strlen($banValue) < 10)
+            if (!is_numeric($banValue) && strlen($banValue) < 9)
                 return 'serial';
         }
 
@@ -290,7 +290,7 @@ class BanManager {
         $valuesForQuery = 'INET_ATON(?), INET_ATON(?)';
         $isIpEntry = true;
 
-        if ($rangeEnd == $rangeStart && is_numeric($rangeStart) && strlen($rangeStart) >= 10) {
+        if ($rangeEnd == $rangeStart && is_numeric($rangeStart) && strlen($rangeStart) > 8) {
             $columnsToFill = 'gpci';
             $valuesForQuery = '?';
             $isIpEntry = false;

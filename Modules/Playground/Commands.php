@@ -23,7 +23,6 @@ use \ Nuwani;
 use \ Nuwani \ Bot;
 use \ Nuwani \ BotManager;
 use \ Playground;
-use GpciManager;
 use \ UserStatus;
 
 class Commands {
@@ -1330,21 +1329,22 @@ class Commands {
 
     // !serialinfo serial/nickname/IP address
     private static function OnSerialInfoCommand($bot, $parameters, $channel, $nickname) {
+        echo 1;
         if (count($parameters) != 1) {
             CommandHelper::usageMessage($bot, $channel, '!serialinfo serial/nickname/IP address');
             return;
         }
-
+    echo 1;
         if (GpciManager::IsValidHashedGpci($parameters[0])) {
-
+            var_dump (GpciManager::GetNicknamesByGpci((int)$parameters[0]));
         } else if (GpciManager::IsValidGpci($parameters[0])) {
             $parameters[0] = MurmurHash3::generateHash($parameters[0]);
-
+echo 2;
             self::OnSerialInfoCommand($bot, $parameters, $channel, $nickname);
         } else if (BanManager::IsValidIpv4Address($parameters[0])) {
-
+echo 3;
         } else { // Nickname it is
-
+echo 4;
         }
     }
     // !addalias Nickname Alias
