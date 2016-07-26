@@ -26,7 +26,6 @@ namespace Playground;
 class GpciManager
 {
     public static function IsValidHashedGpci (string $gpci) {
-        var_dump(1);
         if (is_numeric($gpci) && strlen($gpci) > 8)
             return true;
 
@@ -41,16 +40,17 @@ class GpciManager
     }
 
     public static function GetNicknamesByGpci (int $gpci) {
-        echo 1;
         $database = Database::instance();
         if ($statement = $database->prepare('
                 SELECT
-                  sessions.nickname, count(sessions.session_id)
+                  sessions.nickname, count(sessions.session_id) as amount 
                 FROM
                   sessions
                 WHERE
                   sessions.gpci_hash = ?
                 GROUP BY
+                  sessions.nickname
+                ORDER BY
                   sessions.nickname'))
         {
             $statement->bind_param('i', $gpci);
@@ -58,7 +58,6 @@ class GpciManager
 
             $result = $row = array();
             $bindResult = $statement->bind_result($nickname, $amount);
-            var_dump($row);
             while ($bindResult !== false && $statement->fetch()) {
                 $result[] = array (
                     'nickname'  => $nickname,

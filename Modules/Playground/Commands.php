@@ -1055,33 +1055,33 @@ class Commands {
     // Utility function to determine whether a certain field is only writable for the Management.
     private static function IsColumnLimitedToProtectedChannelOperators($column) {
         return $column == 'last_ip' ||
-               $column == 'level' ||
-               $column == 'validated';
+        $column == 'level' ||
+        $column == 'validated';
     }
 
     // Utility function to determine whether a certain field is no longer supported by the gamemode.
     private static function IsColumnDeprecated($column) {
         return $column == 'clock' ||
-               $column == 'clock_tz' ||
-               $column == 'color' ||
-               $column == 'money_bank_limit' ||
-               $column == 'message_flags' ||
-               $column == 'platinum_account' ||
-               $column == 'platinum_earnings' ||
-               $column == 'plus_points' ||
-               $column == 'pro_account' ||
-               $column == 'is_vip' ||
-               $column == 'is_vip_mod';
+        $column == 'clock_tz' ||
+        $column == 'color' ||
+        $column == 'money_bank_limit' ||
+        $column == 'message_flags' ||
+        $column == 'platinum_account' ||
+        $column == 'platinum_earnings' ||
+        $column == 'plus_points' ||
+        $column == 'pro_account' ||
+        $column == 'is_vip' ||
+        $column == 'is_vip_mod';
     }
 
     // Utility function to determine whether a certain field cannot be changed at all.
     private static function IsColumnImmutable($column) {
         return $column == 'password' ||
-               $column == 'password_salt' ||
-               $column == 'settings' ||
-               $column == 'updated' ||
-               $column == 'user_id' ||
-               $column == 'username';
+        $column == 'password_salt' ||
+        $column == 'settings' ||
+        $column == 'updated' ||
+        $column == 'user_id' ||
+        $column == 'username';
     }
 
     // Utility function to determine what the type of data is expected for this column. There are four
@@ -1329,22 +1329,31 @@ class Commands {
 
     // !serialinfo serial/nickname/IP address
     private static function OnSerialInfoCommand($bot, $parameters, $channel, $nickname) {
-        echo 1;
         if (count($parameters) != 1) {
             CommandHelper::usageMessage($bot, $channel, '!serialinfo serial/nickname/IP address');
             return;
         }
-    echo 1;
+
         if (GpciManager::IsValidHashedGpci($parameters[0])) {
-            var_dump (GpciManager::GetNicknamesByGpci((int)$parameters[0]));
+            $result = GpciManager::GetNicknamesByGpci((int)$parameters[0]);
+            if ($result !== false) {
+                $message = '10* Names from serial "' . $parameters[0] . '": ';
+                foreach ($result as $serialUse) {
+                    $message .= $serialUse['nickname'] . '14 (x' . $serialUse['amount'] . '), ';
+                }
+
+                $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
+            } else {
+
+            }
         } else if (GpciManager::IsValidGpci($parameters[0])) {
             $parameters[0] = MurmurHash3::generateHash($parameters[0]);
-echo 2;
+
             self::OnSerialInfoCommand($bot, $parameters, $channel, $nickname);
         } else if (BanManager::IsValidIpv4Address($parameters[0])) {
-echo 3;
+
         } else { // Nickname it is
-echo 4;
+
         }
     }
     // !addalias Nickname Alias
