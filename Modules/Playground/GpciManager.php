@@ -70,4 +70,36 @@ class GpciManager
 
         return false;
     }
+
+    public static function GetSerialsByIp (string $ip) {
+        $database = Database::instance();
+        if ($statement = $database->prepare('
+                SELECT
+                  sessions.gpci_hash, count(sessions.session_id) as amount 
+                FROM
+                  sessions
+                WHERE
+                  sessions.ip_address = ?
+                GROUP BY
+                  sessions.gpci_hash
+                ORDER BY
+                  sessions.gpci_hash'))
+        {
+            $statement->bind_param('i', BanManager::Ipv4ToPositiveLong($ip));
+            $statement->execute();
+
+            $result = $row = array();
+            $bindResult = $statement->bind_result($nickname, $amount);
+            while ($bindResult !== false && $statement->fetch()) {
+                $result[] = array (
+                    'gpci_hash'  => $nickname,
+                    'amount'    => $amount
+                );
+            }
+
+            return $result;
+        }
+
+        return false;
+    }
 }

@@ -1337,21 +1337,30 @@ class Commands {
         if (GpciManager::IsValidHashedGpci($parameters[0])) {
             $result = GpciManager::GetNicknamesByGpci((int)$parameters[0]);
             if ($result !== false) {
-                $message = '10* Names from serial "' . $parameters[0] . '": ';
+                $message = '10* Names by serial "' . $parameters[0] . '": ';
                 foreach ($result as $serialUse) {
                     $message .= $serialUse['nickname'] . '14 (x' . $serialUse['amount'] . '), ';
                 }
 
                 $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
             } else {
-
+                $bot->send('PRIVMSG ' . $channel . ' :10* No results found.');
             }
         } else if (GpciManager::IsValidGpci($parameters[0])) {
-            $parameters[0] = MurmurHash3::generateHash($parameters[0]);
-
-            self::OnSerialInfoCommand($bot, $parameters, $channel, $nickname);
+            CommandHelper::errorMessage($bot, $channel, 'Unfortunately this is not yet implemented! Please use the SECOND/MIDDLE textarea (MurmurHash3 (32/128 bit, x86/x64)) on ' .
+                'http://murmurhash.shorelabs.com/ to get your hashed serial. After that, use !serialinfo again with that number.');
         } else if (BanManager::IsValidIpv4Address($parameters[0])) {
+            $result = GpciManager::GetSerialsByIp((int)$parameters[0]);
+            if ($result !== false) {
+                $message = '10* Serials by IP "' . $parameters[0] . '": ';
+                foreach ($result as $serialUse) {
+                    $message .= $serialUse['gpci_hash'] . '14 (x' . $serialUse['amount'] . '), ';
+                }
 
+                $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
+            } else {
+
+            }
         } else { // Nickname it is
 
         }

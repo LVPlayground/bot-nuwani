@@ -93,7 +93,7 @@ class BanManager {
     }
 
     // Usage i.e. BanManager::FindBannedPlayer('192.168.1.2');
-	// Usage i.e. BanManager::FindBannedPlayer(28459764398);
+    // Usage i.e. BanManager::FindBannedPlayer(28459764398);
     //
     // Returns false in case of no result, otherwise an array with information
     // about the ban in the same format as GetRecentBans().
@@ -116,14 +116,14 @@ class BanManager {
         $statement->bind_param('sss', $bannedByValue, $bannedByValue, $bannedByValue);
         $result = array();
         $statement->bind_result($result['log_date'], $result['ban_ip_range_start'], $result['ban_ip_range_end'],
-			$result['gpci'], $result['ban_expiration_date'], $result['user_nickname'], $result['user_id'],
+            $result['gpci'], $result['ban_expiration_date'], $result['user_nickname'], $result['user_id'],
             $result['subject_nickname'], $result['subject_user_id'], $result['description']);
         $statement->execute();
 
         if ($statement->fetch()) {
             return array(
-				'ip'                    => self::formatIpAddressRange($result['ban_ip_range_start'], $result['ban_ip_range_end']),
-				'gpci'                  => $result['gpci'],
+                'ip'                    => self::formatIpAddressRange($result['ban_ip_range_start'], $result['ban_ip_range_end']),
+                'gpci'                  => $result['gpci'],
                 'date'                  => $result['log_date'],
                 'expiration_date'       => $result['ban_expiration_date'],
                 'player'                => $result['subject_nickname'],
@@ -163,8 +163,8 @@ class BanManager {
         $result = array();
         while ($query !== false && $row = $query->fetch_assoc()) {
             $result[] = array(
-				'ip'                    => self::formatIpAddressRange($row['ban_ip_range_start'], $row['ban_ip_range_end']),
-				'gpci'                  => $row['gpci'],
+                'ip'                    => self::formatIpAddressRange($row['ban_ip_range_start'], $row['ban_ip_range_end']),
+                'gpci'                  => $row['gpci'],
                 'date'                  => $row['log_date'],
                 'expiration_date'       => $row['ban_expiration_date'],
                 'player'                => $row['subject_nickname'],
@@ -188,34 +188,34 @@ class BanManager {
         self::createEntry(self::BanEntry, $username, $administrator, $reason, $gpcihash, $gpcihash, time() + ($duration * 86400));
     }
 
-	// Usage i.e. UnbanIp('127.0.0.2', 'Russell', 'He has been nice.');
-	public static function UnbanIp($address, $administrator, $note) {
-		self::UnbanPlayer($address, $administrator, $note);
-	}
+    // Usage i.e. UnbanIp('127.0.0.2', 'Russell', 'He has been nice.');
+    public static function UnbanIp($address, $administrator, $note) {
+        self::UnbanPlayer($address, $administrator, $note);
+    }
 
-	// Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
-	public static function UnbanGpci($gpci, $administrator, $note) {
-		self::UnbanPlayer($gpci, $administrator, $note);
-	}
+    // Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
+    public static function UnbanGpci($gpci, $administrator, $note) {
+        self::UnbanPlayer($gpci, $administrator, $note);
+    }
 
     // Usage i.e. UnbanPlayer('127.0.0.2', 'Russell', 'He has been nice.');
-	// or
-	// Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
-	private static function UnbanPlayer($unbanValue, $administrator, $note) {
-		$existingBan = self::FindBannedPlayer($unbanValue);
+    // or
+    // Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
+    private static function UnbanPlayer($unbanValue, $administrator, $note) {
+        $existingBan = self::FindBannedPlayer($unbanValue);
         if (!$existingBan) {
             return null;
         }
 
-		if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
-			$whereBanValue = '(ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))';
-		else
-			$whereBanValue = 'gpci = ?';
+        if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
+            $whereBanValue = '(ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))';
+        else
+            $whereBanValue = 'gpci = ?';
 
         // Unban a player by setting ban_expiration_date to NOW()
         $database = Database::instance();
         $statement = $database->prepare(
-			'UPDATE
+            'UPDATE
                 logs
             SET
                 ban_expiration_date = NOW()
@@ -224,10 +224,10 @@ class BanManager {
                 ban_expiration_date > NOW() AND
                 ' . $whereBanValue);
 
-		if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
-			$statement->bind_param('ss', $unbanValue, $unbanValue);
-		else
-			$statement->bind_param('s', $unbanValue);
+        if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
+            $statement->bind_param('ss', $unbanValue, $unbanValue);
+        else
+            $statement->bind_param('s', $unbanValue);
 
         $statement->execute();
 
@@ -255,6 +255,13 @@ class BanManager {
             return true;
 
         return false;
+    }
+
+    public static function Ipv4ToPositiveLong (string $ipv4) {
+        $longIpv4 = ip2long ($ipv4);
+        list (, $positiveLongIpv4) = unpack ('l', pack ('l', $longIpv4));
+
+        return $positiveLongIpv4;
     }
 
     //// Private helper methods ////
@@ -290,7 +297,7 @@ class BanManager {
         $valuesForQuery = 'INET_ATON(?), INET_ATON(?)';
         $isIpEntry = true;
 
-        if ($rangeEnd == $rangeStart && is_numeric($rangeStart) && strlen($rangeStart) > 8) {
+        if ($rangeEnd == $rangeStart && is_numeric($rangeStart) && strlen($rangeStart) >= 10) {
             $columnsToFill = 'gpci';
             $valuesForQuery = '?';
             $isIpEntry = false;
