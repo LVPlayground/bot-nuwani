@@ -65,6 +65,9 @@ class GpciManager
                 );
             }
 
+            if (count($result) == 0)
+                return false;
+
             return $result;
         }
 
@@ -97,6 +100,9 @@ class GpciManager
                 );
             }
 
+            if (count($result) == 0)
+                return false;
+
             return $result;
         }
 
@@ -128,6 +134,9 @@ class GpciManager
                     'amount'    => $amount
                 );
             }
+
+            if (count($result) == 0)
+                return false;
 
             return $result;
         }

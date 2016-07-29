@@ -1347,6 +1347,7 @@ class Commands {
         } else if (GpciManager::IsValidGpci($parameters[0])) {
             CommandHelper::errorMessage($bot, $channel, 'Unfortunately this is not yet implemented! Please use the SECOND/MIDDLE textarea (MurmurHash3 (32/128 bit, x86/x64)) on ' .
                 'http://murmurhash.shorelabs.com/ to get your hashed serial. After that, use !serialinfo again with that number.');
+            return;
         } else if (BanManager::IsValidIpv4Address($parameters[0])) {
             $result = GpciManager::GetGpcisByIp($parameters[0]);
             if ($result !== false) {
