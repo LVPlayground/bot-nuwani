@@ -71,7 +71,7 @@ class GpciManager
         return false;
     }
 
-    public static function GetSerialsByIp (string $ip) {
+    public static function GetGpcisByIp (string $ip) {
         $database = Database::instance();
         if ($statement = $database->prepare('
                 SELECT
@@ -85,14 +85,46 @@ class GpciManager
                 ORDER BY
                   sessions.gpci_hash'))
         {
-            $statement->bind_param('i', BanManager::Ipv4ToPositiveLong($ip));
+            $statement->bind_param('s', BanManager::Ipv4ToPositiveLong($ip));
             $statement->execute();
 
             $result = $row = array();
-            $bindResult = $statement->bind_result($nickname, $amount);
+            $bindResult = $statement->bind_result($gpci_hash, $amount);
             while ($bindResult !== false && $statement->fetch()) {
                 $result[] = array (
-                    'gpci_hash'  => $nickname,
+                    'gpci_hash' => $gpci_hash,
+                    'amount'    => $amount
+                );
+            }
+
+            return $result;
+        }
+
+        return false;
+    }
+
+    public static function GetGpcisByNickname (string $nickname) {
+        $database = Database::instance();
+        if ($statement = $database->prepare('
+                SELECT
+                  sessions.gpci_hash, count(sessions.session_id) as amount
+                FROM
+                  sessions
+                WHERE
+                  sessions.nickname = ?
+                GROUP BY
+                  sessions.gpci_hash
+                ORDER BY
+                  sessions.gpci_hash'))
+        {
+            $statement->bind_param('s', $nickname);
+            $statement->execute();
+
+            $result = $row = array();
+            $bindResult = $statement->bind_result($gpci_hash, $amount);
+            while ($bindResult !== false && $statement->fetch()) {
+                $result[] = array (
+                    'gpci_hash' => $gpci_hash,
                     'amount'    => $amount
                 );
             }

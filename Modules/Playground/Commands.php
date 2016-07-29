@@ -18,7 +18,6 @@ namespace Playground;
 
 use \ LVP;
 use \ ModuleBase;
-use MurmurHash3;
 use \ Nuwani;
 use \ Nuwani \ Bot;
 use \ Nuwani \ BotManager;
@@ -602,7 +601,7 @@ class Commands {
         if ($result === false) {
             CommandHelper::infoMessage($bot, $channel, 'The ' . $ipOrSerialHash . ' ' . $banValue . ' is currently not banned.');
         } else {
-            $bannedValue = $isIpSearch ? $result['ip'] : $result['gpci'];
+            $bannedValue = $isIpSearch ? $result['ip'] : $result['gpci_hash'];
             CommandHelper::infoMessage($bot, $channel, 'The ' . $ipOrSerialHash . ' ' . $banValue . ' is currently banned: ' . $result['player'] . ' (' . $bannedValue . '), reason: ' . $result['message']);
         }
     }
@@ -1337,20 +1336,19 @@ class Commands {
         if (GpciManager::IsValidHashedGpci($parameters[0])) {
             $result = GpciManager::GetNicknamesByGpci((int)$parameters[0]);
             if ($result !== false) {
-                $message = '10* Names by serial "' . $parameters[0] . '": ';
+                $message = '10* Players by serial "' . $parameters[0] . '": ';
                 foreach ($result as $serialUse) {
                     $message .= $serialUse['nickname'] . '14 (x' . $serialUse['amount'] . '), ';
                 }
 
                 $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
-            } else {
-                $bot->send('PRIVMSG ' . $channel . ' :10* No results found.');
+                return;
             }
         } else if (GpciManager::IsValidGpci($parameters[0])) {
             CommandHelper::errorMessage($bot, $channel, 'Unfortunately this is not yet implemented! Please use the SECOND/MIDDLE textarea (MurmurHash3 (32/128 bit, x86/x64)) on ' .
                 'http://murmurhash.shorelabs.com/ to get your hashed serial. After that, use !serialinfo again with that number.');
         } else if (BanManager::IsValidIpv4Address($parameters[0])) {
-            $result = GpciManager::GetSerialsByIp((int)$parameters[0]);
+            $result = GpciManager::GetGpcisByIp($parameters[0]);
             if ($result !== false) {
                 $message = '10* Serials by IP "' . $parameters[0] . '": ';
                 foreach ($result as $serialUse) {
@@ -1358,12 +1356,22 @@ class Commands {
                 }
 
                 $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
-            } else {
-
+                return;
             }
         } else { // Nickname it is
+            $result = GpciManager::GetGpcisByNickname($parameters[0]);
+            if ($result !== false || $parameters[0] != '127.0.0.1') {
+                $message = '10* Serials by player "' . $parameters[0] . '": ';
+                foreach ($result as $serialUse) {
+                    $message .= $serialUse['gpci_hash'] . '14 (x' . $serialUse['amount'] . '), ';
+                }
 
+                $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
+                return;
+            }
         }
+
+        $bot->send('PRIVMSG ' . $channel . ' :10* No results found.');
     }
     // !addalias Nickname Alias
     private static function OnAddAliasCommand($bot, $parameters, $channel, $nickname) {
