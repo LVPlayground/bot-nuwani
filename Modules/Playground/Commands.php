@@ -558,11 +558,13 @@ class Commands {
             $note = 'Unbanned';
         }
 
-        if (!$banValueType = BanManager::IsValidForGetBanValueType($banValue)) {
+        $banValueType = BanManager::IsValidForGetBanValueType($banValue);
+        if ($banValueType !== true) {
             CommandHelper::errorMessage($bot, $channel, 'Invalid ' . $banValueType . ' given.');
             return false;
         }
-        $isIpSearch = $banValueType && strpos($banValueType, '.');
+
+        $isIpSearch = $banValueType && strpos($banValue, '.');
 
         if ($isIpSearch) {
             $unbanType = 'IP address';
@@ -590,11 +592,12 @@ class Commands {
 
         $banValue = array_shift($parameters);
 
-        if (!$banValueType = BanManager::IsValidForGetBanValueType($banValue)) {
+        $banValueType = BanManager::IsValidForGetBanValueType($banValue);
+        if ($banValueType !== true) {
             CommandHelper::errorMessage($bot, $channel, 'Invalid ' . $banValueType . ' given.');
             return false;
         }
-        $isIpSearch = $banValueType && strpos($banValueType, '.');
+        $isIpSearch = $banValueType && strpos($banValue, '.');
 
         $result = BanManager::FindBannedPlayer($banValue);
         $ipOrSerialHash = $isIpSearch ? 'IP address' : 'serial hash';
@@ -674,11 +677,19 @@ class Commands {
             if ($key === 'total_results')
                 continue;
 
+            $whyLogLine = '';
+            if ($logEntry['type'] == BanManager::BanEntry) {
+                if (strlen ($logEntry['ip']) > 0)
+                    $whyLogLine = ' 14(IP: ' . $logEntry['ip'] . ')';
+                else if (strlen ($logEntry['gpci_hash']) > 0)
+                    $whyLogLine = ' 14(Serial: ' . $logEntry['gpci_hash'] . ')';
+            }
+
             $banDuration = round($logEntry['duration'] / 86400) /* seconds in a day */ > 0 ? round($logEntry['duration'] / 86400) : 0;
             CommandHelper::channelMessage($bot, $channel, '4[' . $logEntry['date'] . '] 3(' . $logEntry['type']
                 . ' by ' . $logEntry['admin'] . '): ' . trim($logEntry['message'])
                 . ($banDuration > 0 ? ' 5(Duration: ' .  $banDuration . ' day(s))' : '')
-                . (strlen($logEntry['ip']) > 0 ? ' 14(IP: ' . $logEntry['ip'] . ')' : ''));
+                . $whyLogLine);
         }
     }
 
@@ -1430,7 +1441,8 @@ class Commands {
 
     // Utility function to check for valid parameters in the banip/-serial cmd
     private static function AreGivenBanParametersValid($bot, $channel, $banValue, $playerName, $duration, $reason) {
-        if (!$banValueType = BanManager::IsValidForGetBanValueType($banValue)) {
+        $banValueType = BanManager::IsValidForGetBanValueType($banValue);
+        if ($banValueType !== true) {
             CommandHelper::errorMessage($bot, $channel, 'Invalid ' . $banValueType . ' given.');
             return false;
         }

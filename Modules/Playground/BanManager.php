@@ -113,11 +113,13 @@ class BanManager {
             ORDER BY
                 log_date DESC
             LIMIT 1');
+
         $statement->bind_param('sss', $bannedByValue, $bannedByValue, $bannedByValue);
         $result = array();
         $statement->bind_result($result['log_date'], $result['ban_ip_range_start'], $result['ban_ip_range_end'],
             $result['gpci_hash'], $result['ban_expiration_date'], $result['user_nickname'], $result['user_id'],
             $result['subject_nickname'], $result['subject_user_id'], $result['description']);
+
         $statement->execute();
 
         if ($statement->fetch()) {
@@ -190,12 +192,12 @@ class BanManager {
 
     // Usage i.e. UnbanIp('127.0.0.2', 'Russell', 'He has been nice.');
     public static function UnbanIp($address, $administrator, $note) {
-        self::UnbanPlayer($address, $administrator, $note);
+        return self::UnbanPlayer($address, $administrator, $note);
     }
 
     // Usage i.e. UnbanGpci(28459764398, 'Russell', 'He has been nice.');
     public static function UnbanGpci($gpci, $administrator, $note) {
-        self::UnbanPlayer($gpci, $administrator, $note);
+        return self::UnbanPlayer($gpci, $administrator, $note);
     }
 
     // Usage i.e. UnbanPlayer('127.0.0.2', 'Russell', 'He has been nice.');
@@ -207,7 +209,7 @@ class BanManager {
             return null;
         }
 
-        if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
+        if (!is_numeric($unbanValue) && strpos($unbanValue, '.'))
             $whereBanValue = '(ban_ip_range_start <= INET_ATON(?) AND ban_ip_range_end >= INET_ATON(?))';
         else
             $whereBanValue = 'gpci_hash = ?';
@@ -224,7 +226,7 @@ class BanManager {
                 ban_expiration_date > NOW() AND
                 ' . $whereBanValue);
 
-        if (!is_numeric($unbanValue) && strlen($unbanValue) < 9)
+        if (!is_numeric($unbanValue) && strpos($unbanValue, '.'))
             $statement->bind_param('ss', $unbanValue, $unbanValue);
         else
             $statement->bind_param('s', $unbanValue);
@@ -259,9 +261,9 @@ class BanManager {
 
     public static function Ipv4ToPositiveLong (string $ipv4) {
         $longIpv4 = ip2long ($ipv4);
-        list (, $positiveLongIpv4) = unpack ('l', pack ('l', $longIpv4));
+        //list (, $positiveLongIpv4) = unpack ('l', pack ('l', $longIpv4));
 
-        return $positiveLongIpv4;
+        return $longIpv4;//$positiveLongIpv4;
     }
 
     //// Private helper methods ////
@@ -293,34 +295,36 @@ class BanManager {
         $userProfile = LVP::findProfileByNickname($username);
         $adminProfile = LVP::findProfileByNickname($administrator);
 
+        $isIpEntry = true;
         $columnsToFill = 'ban_ip_range_start, ban_ip_range_end';
         $valuesForQuery = 'INET_ATON(?), INET_ATON(?)';
-        $isIpEntry = true;
 
         if ($rangeEnd == $rangeStart && is_numeric($rangeStart) && strlen($rangeStart) > 8) {
-            $columnsToFill = 'gpci_hash';
-            $valuesForQuery = '?';
+            $columnsToFill = 'gpci_hash, ban_ip_range_start, ban_ip_range_end';
+            $valuesForQuery = '?, ?, ?';
             $isIpEntry = false;
         }
 
-        $database = Database::instance();
-        $statement = $database->prepare(
-            'INSERT INTO logs (
+        $database  = Database::instance();
+        $query     = 'INSERT INTO logs (
                 log_date, log_type, ' . $columnsToFill . ', ban_expiration_date,
                 user_nickname, user_id, subject_nickname, subject_user_id, description
             )
             VALUES (
-                NOW(), ?, ' . $valuesForQuery .  ', FROM_UNIXTIME(?), ?, ?, ?, ?, ?
-            )');
-        $userId = $userProfile->exists() ? $userProfile['user_id'] : 0;
-        $adminId = $adminProfile->exists() ? $adminProfile['user_id'] : 0;
+                NOW(), ?, ' . $valuesForQuery . ', FROM_UNIXTIME(?), ?, ?, ?, ?, ?
+            )';
+        $statement = $database->prepare($query);
+        $userId    = $userProfile->exists() ? $userProfile['user_id'] : 0;
+        $adminId   = $adminProfile->exists() ? $adminProfile['user_id'] : 0;
 
         if ($isIpEntry)
             $statement->bind_param('sssssisis', $type, $rangeStart, $rangeEnd, $expirationDate,
                 $administrator, $adminId, $username, $userId, $message);
-        else
-            $statement->bind_param('ssssisis', $type, $rangeStart, $expirationDate,
+        else {
+            $zero = 0;
+            $statement->bind_param('siiissisis', $type, $rangeStart, $zero, $zero, $expirationDate,
                 $administrator, $adminId, $username, $userId, $message);
+        }
 
         $statement->execute();
         $statement->close();
