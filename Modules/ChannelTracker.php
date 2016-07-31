@@ -14,6 +14,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Nuwani\Bot;
 use Nuwani \ ModuleManager;
 
 class UserStatus {
@@ -37,18 +38,18 @@ class ChannelTracker extends ModuleBase {
             mkdir(self::DataDir, 0777, true);
         }
     }
-    
+
     public function userLevelForChannel($nickname, $channel) {
         $channel = strtolower($channel);
         if (isset($this->m_channels[$channel]) === false)
             return 0;
-        
+
         if (isset($this->m_channels[$channel][$nickname]) === false)
             return 0;
-        
+
         return $this->m_channels[$channel][$nickname];
     }
-    
+
     public function highestUserLevelForChannel($nickname, $channel) {
         $status = $this->userLevelForChannel($nickname, $channel);
         if ($status & UserStatus::IsOwner)
@@ -61,25 +62,25 @@ class ChannelTracker extends ModuleBase {
             return UserStatus::IsHalfOperator;
         if ($status & UserStatus::IsVoiced)
             return UserStatus::IsVoiced;
-    
+
         return UserStatus::IsVisitor;
     }
-    
+
     public function onChannelJoin(Bot $bot, $channel, $nickname) {
         self::log('JOIN ' . $channel . ' ' . $nickname);
 
         if ($nickname == $bot['Nickname'])
             $bot->send('NAMES ' . $channel);
-        
+
         $channel = strtolower($channel);
         if (isset($this->m_channels[$channel]) === false)
             $this->m_channels[$channel] = array();
-        
+
         self::log('Channel ' . $channel . ' - Added ' . $nickname . ' with level ' . UserStatus::IsVisitor
             . ' (' . self::formatLevel(UserStatus::IsVisitor) . ')');
         $this->m_channels[$channel][$nickname] = UserStatus::IsVisitor;
     }
-    
+
     public function onChannelLeave(Bot $bot, $channel, $nickname) {
         $channel = strtolower($channel);
         if ($nickname == $bot['Nickname']) {
@@ -87,24 +88,24 @@ class ChannelTracker extends ModuleBase {
             unset($this->m_channels[$channel]);
             return;
         }
-        
+
         if (isset($this->m_channels[$channel]) === false || isset($this->m_channels[$channel][$nickname]) === false)
             return;
-        
+
         self::log('Channel ' . $channel . ' - Removed ' . $nickname);
         unset($this->m_channel[$channel][$nickname]);
     }
-    
+
     public function onChannelKick(Bot $bot, $channel, $kicked, $kicker, $reason) {
         self::log('KICK ' . $kicked . ' ' . $kicker . ' ' . $channel);
         $this->onChannelLeave($bot, $channel, $kicked);
     }
-    
+
     public function onChannelPart(Bot $bot, $channel, $nickname, $reason) {
         self::log('PART ' . $channel . ' ' . $nickname);
         $this->onChannelLeave($bot, $channel, $nickname);
     }
-    
+
     public function onQuit(Bot $bot, $nickname, $reason) {
         self::log('QUIT ' . $nickname);
 
@@ -112,7 +113,7 @@ class ChannelTracker extends ModuleBase {
             // TODO Might want to remove all our data here
             return;
         }
-        
+
         foreach ($this->m_channels as $channel => &$users) {
             if (isset($users[$nickname])) {
                 self::log('Channel ' . $channel . ' - Removed ' . $nickname);
@@ -120,27 +121,27 @@ class ChannelTracker extends ModuleBase {
             }
         }
     }
-    
+
     public function onChangeNick(Bot $bot, $formerNickname, $nickname) {
         self::log('NICK ' . $formerNickname . ' ' . $nickname);
 
         foreach ($this->m_channels as $channel => &$users) {
             if (isset($users[$formerNickname]) === false)
                 continue;
-        
+
             self::log('Channel ' . $channel . ' - Updated ' . $formerNickname . ' to ' . $nickname);
             $users[$nickname] = $users[$formerNickname];
             unset($users[$formerNickname]);
         }
     }
-    
+
     public function onChannelNames(Bot $bot, $channel, $names) {
         self::log('NAMES ' . $channel . ' ' . $names);
 
         $channel = strtolower($channel);
         if (isset($this->m_channels[$channel]) === false)
             return;
-    
+
         foreach (preg_split('/\s+/', $names, -1, PREG_SPLIT_NO_EMPTY) as $user) {
             $level = UserStatus::IsVisitor;
             $offset = 0;
@@ -166,42 +167,42 @@ class ChannelTracker extends ModuleBase {
                         break 2;
                 }
             }
-            
+
             self::log('Channel ' . $channel . ' - Added ' . substr($user, $offset)
                 . ' with level ' . $level . ' (' . self::formatLevel($level) . ')');
             $this->m_channels[$channel][substr($user, $offset)] = $level;
         }
     }
-    
+
     public function onChannelPrivmsg(Bot $bot, $channel, $nickname, $message) {
         $chunks = explode(' ', $message, 2);
 
         if ($chunks[0] != '!channeltrackingstate')
             return;
-        
+
         $channel = strtolower(isset($chunks[1]) ? $chunks[1] : $channel);
         $output = '';
-        
+
         if (isset($this->m_channels[$channel])) {
             foreach ($this->m_channels[$channel] as $nicknameInChannel => $level) {
                 $output .= self::formatLevel($level) . $nicknameInChannel . ',';
             }
-            
+
             $bot->send('NOTICE ' . $nickname . ' :' . $output);
         }
     }
-    
+
     public function onChannelMode(Bot $bot, $channel, $modes) {
         self::log('MODE ' . $channel . ' ' . $modes);
 
         $channel = strtolower($channel);
         if (isset($this->m_channels[$channel]) === false)
             return;
-        
+
         $modes = preg_split('/\s+/', $modes, -1, PREG_SPLIT_NO_EMPTY);
         $commandOperator = 1;
         $modeAddition = true;
-        
+
         for ($index = 0, $length = strlen($modes[0]); $index < $length; ++$index) {
             switch ($modes[0][$index]) {
                 case '+':
@@ -210,7 +211,7 @@ class ChannelTracker extends ModuleBase {
                 case '-':
                     $modeAddition = false;
                     break;
-                
+
                 case 'q':
                 case 'a':
                 case 'o':
@@ -239,7 +240,7 @@ class ChannelTracker extends ModuleBase {
                     }
                     $commandOperator++;
                     break;
-                
+
                 case 'b':
                 case 'k':
                 case 'l':
@@ -261,7 +262,7 @@ class ChannelTracker extends ModuleBase {
             }
         }
     }
-    
+
     private function rightForChannelMode($mode) {
         switch ($mode) {
             case 'q':
@@ -275,7 +276,7 @@ class ChannelTracker extends ModuleBase {
             case 'v':
                 return UserStatus::IsVoiced;
         }
-        
+
         return UserStatus::IsVisitor;
     }
 
