@@ -41,14 +41,17 @@ class Database extends \ MySQLi {
 
     public static function instance() {
         if (self::$m_instance == null || (time() - self::$m_connectionTime) > self::ConnectionTimeoutSeconds) {
-            self::$m_instance = new self();
+            self::$m_instance = new self(true);
             self::$m_connectionTime = time();
         }
 
         return self::$m_instance;
     }
 
-    protected function __construct() {
+    public function __construct($singleton) {
+        if ($singleton === false)
+            throw new \Exception("This class should be used as singleton, please use Database::getInstance() instead of new Database()!");
+
         parent::__construct(self::$m_hostname, self::$m_username, self::$m_password, self::$m_database);
     }
 };
