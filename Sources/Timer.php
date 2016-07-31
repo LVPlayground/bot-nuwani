@@ -10,11 +10,11 @@
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  *
@@ -24,7 +24,7 @@
  * @version $Id: Timer.php 136 2011-02-23 01:23:09Z dik.grapendaal $
  * @package Nuwani
  */
- 
+
 namespace Nuwani;
 
 /**
@@ -38,7 +38,7 @@ namespace Nuwani;
  *
  * The second kind of timer are called "intervals", and, as you might be expecting from its name,
  * will be invoked automatically once the interval has passed. At that time the timer will re-set
- * itself, queuing another invocation of the function. 
+ * itself, queuing another invocation of the function.
  *
  * @package Nuwani
  */
@@ -51,10 +51,10 @@ class Timer
          *
          * @var integer
          */
-        
+
         const   TIMEOUT            = 0;
         const   INTERVAL           = 1;
-        
+
         /**
          * The running timers will be contained within this property. Each entry in this array will
          * have the following information associated with itself:
@@ -66,21 +66,21 @@ class Timer
          *
          * Registering new timers will be done by the create() method, whereas removing timers will
          * be handled by the destroy() method.
-         * 
+         *
          * @var array
          */
-        
+
         private static $timers = array ();
-        
+
         /**
          * We store the last handed out timer Id as a property, considering this ensures that there
          * won't be any double Ids. The number will be incremented within the create method.
          *
          * @var integer
          */
-        
+
         private static $timerId = 0;
-        
+
         /**
          * Creating a new timer has to be done by invoking this method. It expects a number of
          * parameters to properly set up the timer. Only the callback itself is required, in which
@@ -91,7 +91,7 @@ class Timer
          * @param integer $type The type of timer which should be created.
          * @return integer Id of the timer which has been registered.
          */
-        
+
         public static function create ($callback, $interval = 0, $type = self :: TIMEOUT)
         {
                 if (!is_callable ($callback))
@@ -99,25 +99,25 @@ class Timer
                         throw new \ Exception ('No timer could be created: the callback is not executable.');
                         return false;
                 }
-                
+
                 $nextInvocation = $interval;
                 if ($interval < time ())
                 {
                         $nextInvocation = microtime (true) + ($interval / 1000);
                 }
-                
+
                 self :: $timers [++ self :: $timerId] = array
                 (
                         'callback'      => $callback,
                         'interval'      => $interval,
                         'type'          => $type,
-                        
+
                         'run_at'        => $nextInvocation
                 );
-                
+
                 return self :: $timerId;
         }
-        
+
         /**
          * Processing all the timers will be done via the bot's main loop, during each tick within
          * the bot's system. We'll iterate over all available timers and execute them if they're
@@ -126,27 +126,27 @@ class Timer
          * If the callback a timer invokes, for whatever reason, triggers an exception, the timer
          * will be destroyed and won't execute again.
          */
-        
-        public function process ()
+
+        public static function process ()
         {
                 $currentTime = microtime (true);
                 foreach (self :: $timers as $timerId => & $timerInfo)
                 {
                         if ($timerInfo ['run_at'] > $currentTime)
                                 continue;
-                        
+
                         try
                         {
                                 call_user_func ($timerInfo ['callback']);
-                                
+
                                 if ($timerInfo ['type'] === self :: TIMEOUT)
                                 {
                                         self :: destroy ($timerId);
                                         continue;
                                 }
-                                
+
                                 $timerInfo ['run_at'] = microtime (true) + ($timerInfo ['interval'] / 1000);
-                                
+
                         }
                         catch (\ Exception $e)
                         {
@@ -154,7 +154,7 @@ class Timer
                         }
                 }
         }
-        
+
         /**
          * Destroying a timer may be done by invoking the destroy method. We'll remove the timer
          * from our local array, which will cause the process method to ignore it altogether.
@@ -162,7 +162,7 @@ class Timer
          * @param integer $timerId Id of the timer which should be destroyed.
          * @return boolean Were we properly able to destroy the timer?
          */
-        
+
         public static function destroy ($timerId)
         {
                 if (is_numeric ($timerId) && isset (self :: $timers [$timerId]))
@@ -170,7 +170,7 @@ class Timer
                         unset (self :: $timers [$timerId]);
                         return true;
                 }
-                
+
                 return false;
         }
 }
