@@ -848,7 +848,7 @@ class Commands {
         $statement->execute();
 
         if ($statement->affected_rows == 0) {
-            CommandHelper::errorMessage('Your test account could not be created. If this problems persists, please create a ticket in Trac.');
+            CommandHelper::errorMessage('Your test account could not be created. If this problems persists, please create a ticket on GitHub.');
             return;
         }
 
@@ -864,25 +864,7 @@ class Commands {
 
     // !clearbetabans
     private static function OnClearBetaBansCommand(Bot $bot, $channel, $nickname) {
-        return;
-        
-        $db = self::TestDatabaseConnection();
-
-        // Verify that we're not accidentially modifying the lvp_mainserver database. This should be seen
-        // as an ASSERT(), because clearing all bans in the real database would be very bad.
-        $currentDatabaseQuery = $db->query('SELECT DATABASE()');
-        if ($currentDatabaseQuery === false || $currentDatabaseQuery->num_rows != 1)
-            return; // could not select the database.
-
-        $currentDatabase = $currentDatabaseQuery->mysqli_fetch_row();
-        if ($currentDatabase[0] == 'lvp_mainserver')
-            return; // we're in lvp_mainserver. ouch.
-
-        // By this time we're certain that we're not in the real database. Truncate the table.
-        $db->query('TRUNCATE bans');
-
-        // And close the connection because we don't own it.
-        $db->close();
+        CommandHelper::errorMessage('Did you get banned on the testserver? Great job. Now go create a ban appeal on the forum.');
     }
 
     // !reconnectbot [botName]
