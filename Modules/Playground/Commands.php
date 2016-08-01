@@ -864,6 +864,8 @@ class Commands {
 
     // !clearbetabans
     private static function OnClearBetaBansCommand(Bot $bot, $channel, $nickname) {
+        return;
+        
         $db = self::TestDatabaseConnection();
 
         // Verify that we're not accidentially modifying the lvp_mainserver database. This should be seen
