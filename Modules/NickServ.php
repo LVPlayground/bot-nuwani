@@ -141,37 +141,39 @@ class NickServ extends ModuleBase {
      * @param Bot $bot
      * @param string $message
      */
-    private function handleNickServMessage(Bot $bot, $message) {
+    private function handleNickServMessage(Bot $bot, string $nickname, $message) {
         if (strpos($message, 'registered and protected') !== false) {
             if (!isset($this -> attemptedIdentify[$bot['Network'] . $bot['Nickname']])) {
                 $this -> identify($bot);
             }
         } else {
-            switch (trim($message)) {
-                case 'Password accepted - you are now recognized.':
-                    if ($this -> notifySuccess != '') {
-                        // Used !identify, so the user expects a response.
-                        $this -> notifyOwners($bot, 'Successfully identified with NickServ.');
-                        $this -> notifySuccess = '';
-                    }
+            if ($nickname == self::NICKSERV_NICKNAME) {
+                switch (trim($message)) {
+                    case 'Password accepted - you are now recognized.':
+                        if ($this -> notifySuccess != '') {
+                            // Used !identify, so the user expects a response.
+                            $this -> notifyOwners($bot, 'Successfully identified with NickServ.');
+                            $this -> notifySuccess = '';
+                        }
 
-                    if (isset($this -> attemptedIdentify[$bot['Network'] . $bot['Nickname']])) {
-                        unset($this -> attemptedIdentify[$bot['Network'] . $bot['Nickname']]);
-                    }
-                    
-                    break;
+                        if (isset($this -> attemptedIdentify[$bot['Network'] . $bot['Nickname']])) {
+                            unset($this -> attemptedIdentify[$bot['Network'] . $bot['Nickname']]);
+                        }
 
-                case 'Password incorrect.':
-                    $this -> notifyOwners($bot, 'NickServ password for ' . $bot['Nickname'] . ' incorrect.',
-                        self :: LOGGER_LEVEL_ERROR);
-                    break;
+                        break;
 
-                case 'Your nick isn\'t registered.':
-                    $this -> notifyOwners($bot, 'Nickname ' . $bot['Nickname'] . ' is not registered with NickServ.',
-                        self :: LOGGER_LEVEL_ERROR);
-                    break;
+                    case 'Password incorrect.':
+                        $this -> notifyOwners($bot, 'NickServ password for ' . $bot['Nickname'] . ' incorrect.',
+                            self :: LOGGER_LEVEL_ERROR);
+                        break;
+
+                    case 'Your nick isn\'t registered.':
+                        $this -> notifyOwners($bot, 'Nickname ' . $bot['Nickname'] . ' is not registered with NickServ.',
+                            self :: LOGGER_LEVEL_ERROR);
+                        break;
+                }
             }
-            
+
             // Always join the channels, no matter what the response was.
             if (isset($bot['OnConnect']['Channels'])) {
                 $this->joinChannels($bot);
@@ -181,7 +183,7 @@ class NickServ extends ModuleBase {
 
     /**
      * Joins the channels as specified in the Bot's configuration.
-     * 
+     *
      * @param Bot $bot The bot to join the channels for.
      */
     private function joinChannels(Bot $bot) {
@@ -209,9 +211,7 @@ class NickServ extends ModuleBase {
      * @param string $message The actual message we received.
      */
     public function onNotice(Bot $bot, $channel, $nickname, $message) {
-        if ($nickname == self :: NICKSERV_NICKNAME) {
-            $this -> handleNickServMessage($bot, $message);
-        }
+        $this -> handleNickServMessage($bot, $nickname, $message);
     }
 
     /**
@@ -222,9 +222,7 @@ class NickServ extends ModuleBase {
      * @param string $message The actual message received.
      */
     public function onPrivmsg(Bot $bot, $nickname, $message) {
-        if ($nickname == self :: NICKSERV_NICKNAME) {
-            $this -> handleNickServMessage($bot, $message);
-        }
+        $this -> handleNickServMessage($bot, $nickname, $message);
     }
 }
 ?>
