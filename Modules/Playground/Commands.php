@@ -848,7 +848,7 @@ class Commands {
         $statement->execute();
 
         if ($statement->affected_rows == 0) {
-            CommandHelper::errorMessage('Your test account could not be created. If this problems persists, please create a ticket on GitHub.');
+            CommandHelper::errorMessage($bot, $channel, 'Your test account could not be created. If this problems persists, please create a ticket on GitHub.');
             return;
         }
 
@@ -864,7 +864,7 @@ class Commands {
 
     // !clearbetabans
     private static function OnClearBetaBansCommand(Bot $bot, $channel, $nickname) {
-        CommandHelper::errorMessage('Did you get banned on the testserver? Great job. Now go create a ban appeal on the forum.');
+        CommandHelper::errorMessage($bot, $channel, 'Did you get banned on the testserver? Great job. Now go create a ban appeal on the forum.');
     }
 
     // !reconnectbot [botName]
