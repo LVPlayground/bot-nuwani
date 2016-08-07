@@ -16,8 +16,9 @@
 
 namespace Playground;
 
-use \ DirectoryIterator;
-use \ Nuwani \ BotManager;
+use Nuwani\BotGroup;
+use Nuwani\BotManager;
+use Playground;
 
 // This class is intended to implement special behavior for certain kinds of incoming events.
 class MessageFeedEventListener {
@@ -37,7 +38,7 @@ class MessageFeedEventListener {
             if ($bot === false)
                 continue;
 
-            if ($bot instanceof \ Nuwani \ BotGroup)
+            if ($bot instanceof BotGroup)
                 $bot = $bot->current();
 
             $bot->send('PRIVMSG ' . $channel . ' :4*** Global Gamemode Initialization');
@@ -52,7 +53,7 @@ class MessageFeedEventListener {
         $latestFile = null;
         $latestFileTime = 0;
 
-        foreach (new DirectoryIterator($this->m_configuration['logs_directory']) as $file) {
+        foreach (new \DirectoryIterator($this->m_configuration['logs_directory']) as $file) {
             if ($file->isDir())
                 continue;
 
@@ -75,7 +76,7 @@ class MessageFeedEventListener {
         if ($bot === false)
             return;
 
-        if ($bot instanceof \ Nuwani \ BotGroup)
+        if ($bot instanceof BotGroup)
             $bot = $bot->current();
 
         foreach($lines as $line)
@@ -83,10 +84,10 @@ class MessageFeedEventListener {
 
         // Let's ask the gamemode for all the available commands which are already available in the game-
         // mode and we should process.
-        \ Playground::sendIngameCommand('requestcommands');
+        Playground::sendIngameCommand('requestcommands');
     }
 
     public function __call($method, $arguments) {
         echo '[MessageFeedEventListener] Unknown event triggered: ' . $method . PHP_EOL;
     }
-};
+}

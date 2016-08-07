@@ -37,7 +37,7 @@
  * !reloadformat command as a protected user in the right channel.
  */
 
-use Playground \ TargetChannel;
+use Playground\TargetChannel;
 
 $format = array(
 
@@ -186,11 +186,11 @@ $format = array(
             if (count($matches) != 5 || substr($matches[3], 0, 1) == '#')
                 return '';
 
-            $bot = \ Nuwani \ BotManager::getInstance()->offsetGet('master');
-            if ($bot instanceof \ Nuwani \ BotGroup)
+            $bot = Nuwani\BotManager::getInstance()->offsetGet('master');
+            if ($bot instanceof Nuwani\BotGroup)
                 $bot = $bot->current();
 
-            if ($bot instanceof \ Nuwani \ Bot)
+            if ($bot instanceof Nuwani\Bot)
                 $bot->send('NOTICE ' . $matches[3] . ' :07PM from 05' . $matches[2] . ' 07(' . $matches[1] . '): ' . $matches[4]);
 
             return '05*** ' . $matches[2] . ' (' . $matches[1] . ') has sent an IRC PM to ' . $matches[3] . ': ' . $matches[4];
@@ -387,9 +387,9 @@ $format = array(
 
             // TODO: We should be able to return multiple results here.
             // FIXME: This always outputs an empty result with year 1970.
-            $logs = \ Playground \ BanManager::GetPlayerLog($playerName, 0, 1);
+            $logs = Playground\BanManager::GetPlayerLog($playerName, 0, 1);
             $message = 'adminm Nuwani ' . date('Y-m-d', $logs['date']) . ' -  ' . $logs['type'] . ' by ' . $logs['admin'] . ': ' . $logs['message'];
-            \ Playground::sendIngameCommand($message);
+            Playground::sendIngameCommand($message);
 
             return '';
         }

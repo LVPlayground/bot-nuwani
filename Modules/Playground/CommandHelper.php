@@ -16,7 +16,7 @@
 
 namespace Playground;
 
-use \ Nuwani;
+use Nuwani\Bot;
 
 class CommandHelper {
 
@@ -31,7 +31,7 @@ class CommandHelper {
 	public static function errorMessage(Bot $bot, $channel, $errorMessage) {
 		self::channelMessage($bot, $channel, '4* Error: ' . $errorMessage);
 	}
-	
+
 	public static function successMessage(Bot $bot, $channel, $errorMessage) {
 		self::channelMessage($bot, $channel, '3* Success: ' . $errorMessage);
 	}
@@ -41,3 +41,4 @@ class CommandHelper {
 	}
 
 }
+

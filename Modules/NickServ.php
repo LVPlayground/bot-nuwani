@@ -1,7 +1,4 @@
 <?php
-use Nuwani \ Bot;
-use Nuwani \ Configuration;
-
 /**
  * NickServ Nuwani Module
  *
@@ -15,6 +12,10 @@ use Nuwani \ Configuration;
  * @version $Id$
  * @package Modules
  */
+
+use Nuwani\Bot;
+use Nuwani\Configuration;
+
 class NickServ extends ModuleBase {
     /**
      * The nickname of the authentication service.
@@ -225,4 +226,3 @@ class NickServ extends ModuleBase {
         $this -> handleNickServMessage($bot, $nickname, $message);
     }
 }
-?>

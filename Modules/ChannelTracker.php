@@ -15,7 +15,6 @@
  */
 
 use Nuwani\Bot;
-use Nuwani \ ModuleManager;
 
 class UserStatus {
     const IsVisitor = 1;
@@ -300,4 +299,4 @@ class ChannelTracker extends ModuleBase {
             file_put_contents(self::DataDir . '/' . date('Y-m-d') . '.log', date('[Y-m-d H:i:s] ') . trim($line) . PHP_EOL, FILE_APPEND);
         }
     }
-};
+}

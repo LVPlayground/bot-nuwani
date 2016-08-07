@@ -28,7 +28,7 @@
  * @see http://nuwani.googlecode.com
  */
 
-use Nuwani \ ModuleManager;
+use Nuwani\ModuleManager;
 
 class Ignore extends ModuleBase {
 
@@ -350,4 +350,3 @@ class Ignore extends ModuleBase {
                 return $this -> handleCommand ($pBot, $sMessage, $sNickname);
         }
 }
-?>

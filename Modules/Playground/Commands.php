@@ -16,13 +16,13 @@
 
 namespace Playground;
 
-use \ LVP;
-use \ ModuleBase;
-use \ Nuwani;
-use \ Nuwani \ Bot;
-use \ Nuwani \ BotManager;
-use \ Playground;
-use \ UserStatus;
+use LVP;
+use ModuleBase;
+use Nuwani\Bot;
+use Nuwani\BotManager;
+use Nuwani\Configuration;
+use Playground;
+use UserStatus;
 
 class Commands {
     const MESSAGE_MAX_LENGTH = 450;
@@ -782,7 +782,7 @@ class Commands {
     // Creates a new connection to the database of the test server and returns the
     // new MySQLi instance. No verification will be done here.
     private static function TestDatabaseConnection() {
-        $config = Nuwani\Configuration::getInstance()->get('Playground');
+        $config = Configuration::getInstance()->get('Playground');
         $credentials = $config['database']['developer'];
 
         return new \MySQLi($credentials['hostname'], $credentials['username'], $credentials['password'], $credentials['database']);
@@ -817,7 +817,7 @@ class Commands {
         // Separately connect to the test-server database.
         $db = self::TestDatabaseConnection();
 
-        $config = Nuwani\Configuration::getInstance()->get('Playground');
+        $config = Configuration::getInstance()->get('Playground');
         $salt = $config['password_key']['developer'];
 
         // Check whether username is in use.
@@ -1021,7 +1021,7 @@ class Commands {
 
     // Utility function for getting the columns available in the users and users_mutable table.
     private static function GetAvailableTableColumnsForLevel($level) {
-        $database = \ Playground \ Database::instance();
+        $database = Database::instance();
         $columns = array();
 
         foreach (array('users', 'users_mutable') as $table) {
@@ -1448,4 +1448,4 @@ class Commands {
 
         return true;
     }
-};
+}

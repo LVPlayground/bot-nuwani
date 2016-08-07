@@ -14,10 +14,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Nuwani \ Bot;
-use Nuwani \ BotManager;
-use Nuwani \ Configuration;
-use Nuwani \ ModuleManager;
+use Nuwani\Bot;
+use Nuwani\BotManager;
+use Nuwani\Configuration;
+use Nuwani\ModuleManager;
 
 require_once __DIR__ . '/BanManager.php';
 require_once __DIR__ . '/CommandHelper.php';
@@ -29,11 +29,11 @@ require_once __DIR__ . '/MessageFeed.php';
 require_once __DIR__ . '/MessageFeedEventListener.php';
 require_once __DIR__ . '/MessageFormatter.php';
 
-use Playground \ Commands;
-use Playground \ MessageFeed;
-use Playground \ MessageFeedEventListener;
-use Playground \ MessageFormatter;
-use Playground \ TargetChannel;
+use Playground\Commands;
+use Playground\MessageFeed;
+use Playground\MessageFeedEventListener;
+use Playground\MessageFormatter;
+use Playground\TargetChannel;
 
 class Playground extends ModuleBase {
     // This corresponds to the version given by !version in #LVP.Dev.
@@ -175,4 +175,4 @@ class Playground extends ModuleBase {
 
         file_put_contents(self::$m_commandFile, $command);
     }
-};
+}

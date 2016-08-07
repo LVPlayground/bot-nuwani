@@ -28,6 +28,8 @@
  * @see http://nuwani.googlecode.com
  */
 
+use Nuwani\Bot;
+
 class Output extends ModuleBase
 {
         /**
@@ -39,7 +41,7 @@ class Output extends ModuleBase
          * @param string $sMessage The message being send to us.
          */
 
-        public function onPrivmsg (Nuwani\Bot $pBot, $sNickname, $sMessage)
+        public function onPrivmsg (Bot $pBot, $sNickname, $sMessage)
         {
                 echo '[' .$sNickname . '] private: ' . $sMessage . PHP_EOL;
         }
@@ -54,7 +56,7 @@ class Output extends ModuleBase
          * @param integer $nErrorLine On which line did the error occur?
          */
 
-        public function onError (Nuwani\Bot $pBot, $nErrorType, $sErrorString, $sErrorFile, $nErrorLine)
+        public function onError (Bot $pBot, $nErrorType, $sErrorString, $sErrorFile, $nErrorLine)
         {
                 switch ($nErrorType)
                 {
@@ -79,7 +81,7 @@ class Output extends ModuleBase
          * @param Exception $pException The exception that has occured.
          */
 
-        public function onException (Nuwani\Bot $pBot, $sSource, Exception $pException)
+        public function onException (Bot $pBot, $sSource, Exception $pException)
         {
                 $sMessage  = '[Exception] Exception occured in "' . $pException -> getFile () . '" on line ';
                 $sMessage .= $pException -> getLine () . ': "' . $pException -> getMessage () . '".' . PHP_EOL;
@@ -91,6 +93,4 @@ class Output extends ModuleBase
 
                 echo $sMessage;
         }
-};
-
-?>
+}

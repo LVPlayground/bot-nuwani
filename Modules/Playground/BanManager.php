@@ -16,7 +16,7 @@
 
 namespace Playground;
 
-use \LVP;
+use LVP;
 
 /**
  * @see http://trac.sa-mp.nl/lvp/browser/LVP/gamemode/trunk/Features/Account/BanManager.pwn
@@ -329,4 +329,4 @@ class BanManager {
         $statement->execute();
         $statement->close();
     }
-};
+}
