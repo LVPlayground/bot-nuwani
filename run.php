@@ -49,6 +49,8 @@ require 'Sources/ModuleManager.php';
 require 'Sources/Socket.php';
 require 'Sources/Timer.php';
 require 'Sources/Bot.php';
+require 'Sources/ISecurityModule.php';
+require 'Sources/ISecurityProvider.php';
 require 'config.php';
 
 if($_SERVER ['argc'] >= 2 && $_SERVER ['argv'] [1] == 'restart') {

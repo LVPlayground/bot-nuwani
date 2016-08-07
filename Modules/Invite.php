@@ -29,6 +29,8 @@
  */
 
 use Nuwani\Bot;
+use Nuwani\ISecurityProvider;
+use Nuwani\ModuleBase;
 use Nuwani\ModuleManager;
 
 class Invite extends ModuleBase

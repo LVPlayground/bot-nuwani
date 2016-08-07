@@ -17,6 +17,7 @@
 use Nuwani\Bot;
 use Nuwani\BotManager;
 use Nuwani\Configuration;
+use Nuwani\ModuleBase;
 use Nuwani\ModuleManager;
 
 require_once __DIR__ . '/BanManager.php';

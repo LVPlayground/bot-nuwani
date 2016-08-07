@@ -33,6 +33,8 @@ use Nuwani\Bot;
 use Nuwani\Configuration;
 use Nuwani\Database;
 use Nuwani\ErrorExceptionHandler;
+use Nuwani\ISecurityProvider;
+use Nuwani\ModuleBase;
 use Nuwani\ModuleManager;
 use Nuwani\Timer;
 

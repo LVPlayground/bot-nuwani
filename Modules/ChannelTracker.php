@@ -15,6 +15,7 @@
  */
 
 use Nuwani\Bot;
+use Nuwani\ModuleBase;
 
 class UserStatus {
     const IsVisitor = 1;

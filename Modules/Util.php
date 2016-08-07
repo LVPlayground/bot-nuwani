@@ -28,6 +28,8 @@
  * @see http://nuwani.googlecode.com
  */
 
+use Nuwani\ModuleBase;
+
 class Util extends ModuleBase
 {
         /**

@@ -15,6 +15,7 @@
 
 use Nuwani\Bot;
 use Nuwani\Configuration;
+use Nuwani\ModuleBase;
 
 class NickServ extends ModuleBase {
     /**

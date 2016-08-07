@@ -29,6 +29,7 @@
  */
 
 use Nuwani\Bot;
+use Nuwani\ModuleBase;
 use Nuwani\ModuleManager;
 use Nuwani\Timer;
 

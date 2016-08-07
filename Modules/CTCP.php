@@ -29,6 +29,7 @@
  */
 
 use Nuwani\Bot;
+use Nuwani\ModuleBase;
 
 class CTCP extends ModuleBase
 {

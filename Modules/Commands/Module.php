@@ -30,7 +30,9 @@
 
 use Nuwani\Bot;
 use Nuwani\BotManager;
-use Nuwani\Memory;
+use Nuwani\ISecurityModule;
+use Nuwani\ISecurityProvider;
+use Nuwani\ModuleBase;
 use Nuwani\ModuleManager;
 
 require_once 'Command.php';

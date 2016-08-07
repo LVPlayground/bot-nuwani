@@ -28,6 +28,7 @@
  * @see http://nuwani.googlecode.com
  */
 
+use Nuwani\ModuleBase;
 use Nuwani\ModuleManager;
 
 class Ignore extends ModuleBase {
