@@ -1,8 +1,8 @@
-After years of faithful duty, we finally replaced the old (Delvor based) Nuwani with a new one, written from scratch using the [url=https://code.google.com/p/nuwani/]Nuwani IRC Platform[/url]: Nuwani2. That's a lot of Nuwani, so in order to prevent confusion as much as possible, I will refer to the newly written bot as "Nuwani2", to the old bot as "Nuwani" and to the open source platform as "Nuwani IRC Platform".
+After years of faithful duty, we finally replaced the old (Delvor based) Nuwani with a new one, written from scratch using the Nuwani IRC Platform: Nuwani2. That's a lot of Nuwani, so in order to prevent confusion as much as possible, I will refer to the newly written bot as "Nuwani2", to the old bot as "Nuwani" and to the open source platform as "Nuwani IRC Platform".
 
-Futhermore, if you have an improvement you'd like to see or if you've found a bug, we'd like to hear from you! To let yourself be heard, please use LVP's bug tracker, [url=https://github.com/LVPlayground/bot-nuwani/issues/new]GitHub[/url].
+Futhermore, if you have an improvement you'd like to see or if you've found a bug, we'd like to hear from you! To let yourself be heard, please use LVP's bug tracker, GitHub.
 
-[color=red][b]The User Levels[/b][/color]
+The User Levels
 
 Alright, before we start, you should know that Nuwani2 differentiates between five (5) different user levels based on the rights of the user in #LVP.echo. They are as follows:
 
@@ -33,13 +33,14 @@ Alright, before we start, you should know that Nuwani2 differentiates between fi
 </tr>
 </table>
 
-[color=red][b]Note[/b][/color]: Even though the Moderator level isn't used anymore, it is still used for temporary rights ingame. This way, temporary moderators can be given % rights in #LVP.echo, without immediately giving them access to all commands.
+Note: Even though the Moderator level isn't used anymore, it is still used for temporary rights ingame. This way, temporary moderators can be given % rights in #LVP.echo, without immediately giving them access to all commands.
 
-[color=red][b]The Commands[/b][/color]
+The Commands
 
 The following tables sum up the available commands in Nuwani2, as well as any restrictions that apply to them. I've split the commands into four sections: player commands, Crew commands, Management commands and Developer commands. I hope this will provide the best overview of all commands, if not, please say so.
 
 Some commands are not only restricted based on the user level, but also to the channel the command is executed in. The tables below also show this information, but to keep things readable, I'll use short identifiers to indicate what channels the commands are limited to. The identifiers are:
+
 
 <table style="width:50%">
 <tr>
@@ -74,7 +75,7 @@ No identifier of course means not limited to any channel.
 <tr>
 <td colspan="3"><span style="color: red;" class="bbc_color"><strong>The Player Commands</strong></span></td>
 </tr>
-<tr><td colspan="3"> </td></tr>
+<tr><td colspan="3"> </td></tr>
 <tr>
 <th>Command</td>
 <th>Description</td>
@@ -110,11 +111,11 @@ No identifier of course means not limited to any channel.
 <td>Send a message to the ingame VIP chat.</td>
 <td><span style="color: blue;" class="bbc_color">VIP</span>, #echo, #vip</td>
 </tr>
-<tr><td colspan="3"> </td></tr>
+<tr><td colspan="3"> </td></tr>
 <tr>
 <td colspan="3"><span style="color: red;" class="bbc_color"><strong>The Crew Commands</strong></span></td>
 </tr>
-<tr><td colspan="3"> </td></tr>
+<tr><td colspan="3"> </td></tr>
 <tr>
 <th>Command</th>
 <th>Description</th>
@@ -151,6 +152,11 @@ No identifier of course means not limited to any channel.
 <td><span style="color: orange;" class="bbc_color">Moderator</span></td>
 </tr>
 <tr>
+<td>!banserial</td>
+<td>Ban a player by their serial, should only be done in case of evading and with caution.</td>
+<td><span style="color: orange;" class="bbc_color">Moderator</span></td>
+</tr>
+<tr>
 <td>!changenickname</td>
 <td>Change a player's nickname.</td>
 <td><span style="color: red;" class="bbc_color">Administrator</span></td>
@@ -167,7 +173,7 @@ No identifier of course means not limited to any channel.
 </tr>
 <tr>
 <td>!isbanned</td>
-<td>Check whether a given IP is currently banned.</td>
+<td>Check whether a given IP or serial is currently banned.</td>
 <td><span style="color: orange;" class="bbc_color">Moderator</span></td>
 </tr>
 <tr>
@@ -206,6 +212,11 @@ No identifier of course means not limited to any channel.
 <td><span style="color: orange;" class="bbc_color">Moderator</span>, #echo</td>
 </tr>
 <tr>
+<td>!serialinfo</td>
+<td>Looks up information based on serial, nickname or IP address.</td>
+<td><span style="color: red;" class="bbc_color">Administrator</span></td>
+</tr>
+<tr>
 <td>!setvalue</td>
 <td>Update a value for a field in a player's account. See !supported for available fields.</td>
 <td><span style="color: red;" class="bbc_color">Administrator</span></td>
@@ -222,7 +233,7 @@ No identifier of course means not limited to any channel.
 </tr>
 <tr>
 <td>!unban</td>
-<td>Unban an IP address with an optional note.</td>
+<td>Unban an IP address or serial with an optional note.</td>
 <td><span style="color: orange;" class="bbc_color">Moderator</span></td>
 </tr>
 <tr>
@@ -240,11 +251,11 @@ No identifier of course means not limited to any channel.
 <td>Retrieve a player's history, including kicks, bans, unbans and notes.</td>
 <td><span style="color: orange;" class="bbc_color">Moderator</span></td>
 </tr>
-<tr><td colspan="3"> </td></tr>
+<tr><td colspan="3"> </td></tr>
 <tr>
 <td colspan="3"><span style="color: red;" class="bbc_color"><strong>The Management Commands</strong></span></td>
 </tr>
-<tr><td colspan="3"> </td></tr>
+<tr><td colspan="3"> </td></tr>
 <tr>
 <th>Command</th>
 <th>Description</th>
@@ -290,11 +301,11 @@ No identifier of course means not limited to any channel.
 <td>Remove an alias from a player's account.</td>
 <td><span style="color: green;" class="bbc_color">Management</span></td>
 </tr>
-<tr><td colspan="3"> </td></tr>
+<tr><td colspan="3"> </td></tr>
 <tr>
 <td colspan="3"><span style="color: red;" class="bbc_color"><strong>The Developer Commands</strong></span></td>
 </tr>
-<tr><td colspan="3"> </td></tr>
+<tr><td colspan="3"> </td></tr>
 <tr>
 <th>Command</th>
 <th>Description</th>
