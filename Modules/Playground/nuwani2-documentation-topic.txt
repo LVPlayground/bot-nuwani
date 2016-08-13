@@ -1,8 +1,8 @@
-After years of faithful duty, we finally replaced the old (Delvor based) Nuwani with a new one, written from scratch using the Nuwani IRC Platform: Nuwani2. That's a lot of Nuwani, so in order to prevent confusion as much as possible, I will refer to the newly written bot as "Nuwani2", to the old bot as "Nuwani" and to the open source platform as "Nuwani IRC Platform".
+After years of faithful duty, we finally replaced the old (Delvor based) Nuwani with a new one, written from scratch using the [url=https://code.google.com/p/nuwani/]Nuwani IRC Platform[/url]: Nuwani2. That's a lot of Nuwani, so in order to prevent confusion as much as possible, I will refer to the newly written bot as "Nuwani2", to the old bot as "Nuwani" and to the open source platform as "Nuwani IRC Platform".
 
-Futhermore, if you have an improvement you'd like to see or if you've found a bug, we'd like to hear from you! To let yourself be heard, please use LVP's bug tracker, GitHub.
+Futhermore, if you have an improvement you'd like to see or if you've found a bug, we'd like to hear from you! To let yourself be heard, please use LVP's bug tracker, [url=https://github.com/LVPlayground/bot-nuwani/issues/new]GitHub[/url].
 
-The User Levels
+[color=red][b]The User Levels[/b][/color]
 
 Alright, before we start, you should know that Nuwani2 differentiates between five (5) different user levels based on the rights of the user in #LVP.echo. They are as follows:
 
@@ -33,9 +33,9 @@ Alright, before we start, you should know that Nuwani2 differentiates between fi
 </tr>
 </table>
 
-Note: Even though the Moderator level isn't used anymore, it is still used for temporary rights ingame. This way, temporary moderators can be given % rights in #LVP.echo, without immediately giving them access to all commands.
+[color=red][b]Note[/b][/color]: Even though the Moderator level isn't used anymore, it is still used for temporary rights ingame. This way, temporary moderators can be given % rights in #LVP.echo, without immediately giving them access to all commands.
 
-The Commands
+[color=red][b]The Commands[/b][/color]
 
 The following tables sum up the available commands in Nuwani2, as well as any restrictions that apply to them. I've split the commands into four sections: player commands, Crew commands, Management commands and Developer commands. I hope this will provide the best overview of all commands, if not, please say so.
 
