@@ -1336,6 +1336,7 @@ class Commands {
                     $message .= $serialUse['nickname'] . '14 (x' . $serialUse['amount'] . '), ';
                 }
 
+                $message = substr ($message, 0, 450);
                 $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
                 return;
             }
@@ -1351,6 +1352,7 @@ class Commands {
                     $message .= $serialUse['gpci_hash'] . '14 (x' . $serialUse['amount'] . '), ';
                 }
 
+                $message = substr ($message, 0, 450);
                 $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
                 return;
             }
@@ -1362,6 +1364,7 @@ class Commands {
                     $message .= $serialUse['gpci_hash'] . '14 (x' . $serialUse['amount'] . '), ';
                 }
 
+                $message = substr ($message, 0, 450);
                 $bot->send('PRIVMSG ' . $channel . ' :' . substr ($message, 0, -3));
                 return;
             }
