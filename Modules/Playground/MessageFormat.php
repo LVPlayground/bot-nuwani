@@ -318,15 +318,15 @@ $format = array(
 
     // [reaction] message
     array(
-        'match'     => '/^\[reaction\] (.+?)$/',
-        'format'    => '4*** First player to type \1 wins \$10.000!',
+        'match'     => '/^\[reaction\] ([^\s]+) (.+?)$/',
+        'format'    => '4*** First player to type \1 wins \$\2!',
         'block-destination' => TargetChannel::developmentEchoChannel()
     ),
 
     // [reaction2] message
     array(
-        'match'     => '/^\[reaction2\] (.+?)$/',
-        'format'    => '4*** First player to solve \1 wins \$10.000!',
+        'match'     => '/^\[reaction2\] ([^\s]+) (.+?)$/',
+        'format'    => '4*** First player to solve \1 wins \$\2!',
         'block-destination' => TargetChannel::developmentEchoChannel()
     ),
 
