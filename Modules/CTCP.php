@@ -1,4 +1,6 @@
 <?php
+use Nuwani\Bot;
+
 /**
  * Nuwani PHP IRC Bot Framework
  * Copyright (c) 2006-2010 The Nuwani Project
