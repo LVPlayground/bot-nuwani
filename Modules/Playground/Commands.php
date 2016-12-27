@@ -142,7 +142,7 @@ class Commands {
                 return true;
 
             case 'why':
-                if ($userLevel >= UserStatus::IsHalfOperator)
+                if (self::isRestrictedChannel($channel) && $userLevel >= UserStatus::IsHalfOperator)
                     self::OnPlayerLogCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
@@ -152,22 +152,13 @@ class Commands {
                 return true;
 
             case 'crash':
-                if (self::isDevelopmentChannel($channel))
-                    self::OnCrashCommand($bot, $parameters, $channel, $nickname);
+                self::OnCrashCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
             case 'createtestacc':
-                if (self::isDevelopmentChannel($channel))
-                    self::OnCreateTestAccountCommand($bot, $parameters, $channel, $nickname);
+                self::OnCreateTestAccountCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
-            case 'clearbetabans':
-                if (self::isDevelopmentChannel($channel))
-                    self::OnClearBetaBansCommand($bot, $channel, $nickname);
-                return true;
-
-            case 'connect': // DEPRECATED: this is the original command, already known by a few people
-            case 'connectbot':
             case 'reconnectbot':
                 if ($userLevel >= UserStatus::IsHalfOperator)
                     self::OnReconnectBotCommand($bot, $parameters, $channel, $nickname);
@@ -194,7 +185,7 @@ class Commands {
                 return true;
 
             case 'supported':
-                if ($userLevel >= UserStatus::IsOperator)
+                if (self::isRestrictedChannel($channel) && $userLevel >= UserStatus::IsOperator)
                     self::OnSupportedCommand($bot, $parameters, $channel, $nickname, $userLevel);
                 return true;
 
@@ -210,17 +201,17 @@ class Commands {
                 return true;
 
             case 'nickhistory':
-                if ($userLevel >= UserStatus::IsOperator)
+                if (self::isRestrictedChannel($channel) && $userLevel >= UserStatus::IsOperator)
                     self::OnNicknameHistoryCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
             case 'aliases':
-                if ($userLevel >= UserStatus::IsOperator)
+                if (self::isRestrictedChannel($channel) && $userLevel >= UserStatus::IsOperator)
                     self::OnAliasesCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
             case 'serialinfo':
-                if ($userLevel >= UserStatus::IsOperator)
+                if (self::isRestrictedChannel($channel) && $userLevel >= UserStatus::IsOperator)
                     self::OnSerialInfoCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
@@ -303,11 +294,7 @@ class Commands {
                 case 'crew':
                     $result |= self::isCrewChannel($channel);
                     break;
-
-                case 'dev':
-                    $result |= self::isDevelopmentChannel($channel);
-                    break;
-
+                    
                 case 'echo':
                     $result |= self::isEchoChannel($channel);
                     break;
@@ -329,10 +316,6 @@ class Commands {
         return TargetChannel::isCrewChannel($channel);
     }
 
-    private static function isDevelopmentChannel($channel) {
-        return TargetChannel::isDevelopmentChannel($channel);
-    }
-
     private static function isEchoChannel($channel) {
         return TargetChannel::isPublicEchoChannel($channel);
     }
@@ -343,6 +326,10 @@ class Commands {
 
     private static function isVipChannel($channel) {
         return TargetChannel::isVipChannel($channel);
+    }
+    
+    private static function isRestrictedChannel($channel) {
+        return TargetChannel::isCrewChannel($channel) || TargetChannel::isManagementChannel($channel);
     }
 
     // !msg [message], !vip [message], !say [message]
