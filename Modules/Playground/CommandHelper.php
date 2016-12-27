@@ -16,7 +16,7 @@
 
 namespace Playground;
 
-use \ Nuwani;
+use Nuwani\Bot;
 
 class CommandHelper {
 
