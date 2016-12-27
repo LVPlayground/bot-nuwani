@@ -4,3 +4,5 @@
 *.phpproj*
 *.cache*
 *.suo*
+
+config.php
