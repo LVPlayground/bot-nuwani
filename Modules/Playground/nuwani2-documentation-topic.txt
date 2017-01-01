@@ -1,4 +1,4 @@
-After years of faithful duty, we finally replaced the old (Delvor based) Nuwani with a new one, written from scratch using the [url=https://code.google.com/p/nuwani/]Nuwani IRC Platform[/url]: Nuwani2. That's a lot of Nuwani, so in order to prevent confusion as much as possible, I will refer to the newly written bot as "Nuwani2", to the old bot as "Nuwani" and to the open source platform as "Nuwani IRC Platform".
+After years of faithful duty, we finally replaced the old (Delvor based) Nuwani with a new one, written from scratch using the [url=https://code.google.com/archive/p/nuwani/]Nuwani IRC Platform[/url]: Nuwani2. That's a lot of Nuwani, so in order to prevent confusion as much as possible, I will refer to the newly written bot as "Nuwani2", to the old bot as "Nuwani" and to the open source platform as "Nuwani IRC Platform".
 
 Futhermore, if you have an improvement you'd like to see or if you've found a bug, we'd like to hear from you! To let yourself be heard, please use LVP's bug tracker, [url=https://github.com/LVPlayground/bot-nuwani/issues/new]GitHub[/url].
 
@@ -40,7 +40,6 @@ Alright, before we start, you should know that Nuwani2 differentiates between fi
 The following tables sum up the available commands in Nuwani2, as well as any restrictions that apply to them. I've split the commands into four sections: player commands, Crew commands, Management commands and Developer commands. I hope this will provide the best overview of all commands, if not, please say so.
 
 Some commands are not only restricted based on the user level, but also to the channel the command is executed in. The tables below also show this information, but to keep things readable, I'll use short identifiers to indicate what channels the commands are limited to. The identifiers are:
-
 
 <table style="width:50%">
 <tr>
@@ -134,7 +133,7 @@ No identifier of course means not limited to any channel.
 <tr>
 <td>!aliases</td>
 <td>Show the list of aliases associated with a certain account.</td>
-<td><span style="color: red;" class="bbc_color">Administrator</span></td>
+<td><span style="color: red;" class="bbc_color">Administrator</span>, #crew, #man</td>
 </tr>
 <tr>
 <td>!announce</td>
@@ -199,7 +198,7 @@ No identifier of course means not limited to any channel.
 <tr>
 <td>!nickhistory</td>
 <td>Retrieve a list of previous nickname for a certain player.</td>
-<td><span style="color: red;" class="bbc_color">Administrator</span></td>
+<td><span style="color: red;" class="bbc_color">Administrator</span>, #crew, #man</td>
 </tr>
 <tr>
 <td>!reconnectbot</td>
@@ -214,7 +213,7 @@ No identifier of course means not limited to any channel.
 <tr>
 <td>!serialinfo</td>
 <td>Looks up information based on serial, nickname or IP address.</td>
-<td><span style="color: red;" class="bbc_color">Administrator</span></td>
+<td><span style="color: red;" class="bbc_color">Administrator</span>, #crew, #man</td>
 </tr>
 <tr>
 <td>!setvalue</td>
@@ -224,7 +223,7 @@ No identifier of course means not limited to any channel.
 <tr>
 <td>!supported</td>
 <td>Retrieve the list of supported fields for !getvalue and !setvalue.</td>
-<td><span style="color: red;" class="bbc_color">Administrator</span></td>
+<td><span style="color: red;" class="bbc_color">Administrator</span>, #crew, #man</td>
 </tr>
 <tr>
 <td>!taketempadmin</td>
@@ -314,16 +313,11 @@ No identifier of course means not limited to any channel.
 <tr>
 <td>!crash</td>
 <td>Find information about a crash.</td>
-<td>#dev</td>
+<td><em><span style="color: grey;" class="bbc_color">None</span></em></td>
 </tr>
 <tr>
 <td>!createtestacc</td>
 <td>Create an account in the test database.</td>
-<td>#dev</td>
-</tr>
-<tr>
-<td>!clearbetabans</td>
-<td>Clear all bans in the test database.</td>
-<td>#dev</td>
+<td><em><span style="color: grey;" class="bbc_color">None</span></em></td>
 </tr>
 </table>
