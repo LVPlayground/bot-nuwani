@@ -6,3 +6,4 @@
 *.suo*
 
 config.php
+nohup.out

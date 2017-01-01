@@ -75,6 +75,13 @@ $format = array(
         }
     ),
 
+    // [joinip] playerId ip playerName
+    array(
+        'match'     => '/^\[joinip\] (\d+) ([^\s]+) ([^\s]+)$/',
+        'format'    => '4IP Address \3 (Id:\1): \2',
+        'prefix'    => '%'
+    ),
+
     // [joinipgpci] playerId playerIp playerName playerGpci
     array(
         'match'     => '/^\[joinipgpci\] (\d+) ([^\s]+) ([^\s]+) ([^\s]+)$/',
@@ -158,7 +165,7 @@ $format = array(
         'prefix'    => '%'
     ),
 
-    // [report] playerName playerId reportedPlayerName reportedPlayerId reason
+    // [report] playerName playerId suspectedPlayer cheatReason
     array(
         'match'     => '/^\[report\] ([^\s]+) (\d+) ([^\s]+) (\d+) *(.*)$/',
         'format'    => '2*** 7Report \1 (Id:\2): Player: \3 (Id:\4) - Reason: \5',
@@ -189,7 +196,6 @@ $format = array(
             $bot = \ Nuwani \ BotManager::getInstance()->offsetGet('master');
             if ($bot instanceof \ Nuwani \ BotGroup)
                 $bot = $bot->current();
-
             if ($bot instanceof \ Nuwani \ Bot)
                 $bot->send('NOTICE ' . $matches[3] . ' :07PM from 05' . $matches[2] . ' 07(' . $matches[1] . '): ' . $matches[4]);
 
@@ -260,17 +266,17 @@ $format = array(
     // Formatting related to several kinds of announcement messages on the server.
     // ---------------------------------------------------------------------------------------------
 
-    // [announce] message
-    array(
-        'match'     => '/^\[announce\] (.+)$/',
-        'format'    => '10*** \1'
-    ),
-
     // [admin] message
     array(
         'match'     => '/^\[admin\] (.+)$/',
         'format'    => '05*** \1',
         'prefix'    => '%'
+    ),
+
+    // [announce] message
+    array(
+        'match'     => '/^\[announce\] (.+)$/',
+        'format'    => '10*** \1'
     ),
 
     // [withdraw] playerId playerName amount
@@ -319,14 +325,14 @@ $format = array(
     // [reaction] message
     array(
         'match'     => '/^\[reaction\] (.+?)$/',
-        'format'    => '4*** First player to type \1 wins \$5.000!',
+        'format'    => '4*** First player to type \1 wins \$10.000!',
         'block-destination' => TargetChannel::developmentEchoChannel()
     ),
 
     // [reaction2] message
     array(
         'match'     => '/^\[reaction2\] (.+?)$/',
-        'format'    => '4*** First player to solve \1 wins \$5.000!',
+        'format'    => '4*** First player to solve \1 wins \$10.000!',
         'block-destination' => TargetChannel::developmentEchoChannel()
     ),
 
@@ -369,10 +375,19 @@ $format = array(
     // All messages with this prefix will be delivered to the development echo instead.
     array(
         'match'     => '/^\[extern\] (.+)$/',
-        'format'    => '\1',
+        'function'  => function($matches) {
+            if (count($matches) != 2)
+                return '';
 
-        // Send the result of this format to another message feed.
-        'message-feed' => 'developer'
+            $destination = TargetChannel::developmentChannel();
+            $prefix = '';
+
+	    // FIXME Disabled because the ServerEventListener is not static anymore
+	    return '';
+            //return \ Playground \ MessageFormatter::Format($matches[1], $destination, $prefix, new \ Playground \ ServerEventListener(/** isExternal **/ true));
+        },
+
+        'destination'   => TargetChannel::developmentEchoChannel()
     ),
 
     // [why] requesterId playerName
