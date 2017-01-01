@@ -4,6 +4,7 @@
 *.phpproj*
 *.cache*
 *.suo*
+*.log
 
 config.php
 nohup.out
