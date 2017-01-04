@@ -242,10 +242,10 @@ class BanManager {
 
     public static function IsValidForGetBanValueType ($banValue) {
         if (!self::IsValidIpv4Address($banValue)) {
-            if (strpos ($banValue, '.'))
+            if (substr_count ($banValue, '.') == 3)
                 return 'IP address';
 
-            if (!is_numeric($banValue) && strlen($banValue) < 9)
+            if (!is_numeric($banValue))
                 return 'serial';
         }
 

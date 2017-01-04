@@ -75,13 +75,6 @@ $format = array(
         }
     ),
 
-    // [joinip] playerId ip playerName
-    array(
-        'match'     => '/^\[joinip\] (\d+) ([^\s]+) ([^\s]+)$/',
-        'format'    => '4IP Address \3 (Id:\1): \2',
-        'prefix'    => '%'
-    ),
-
     // [joinipgpci] playerId playerIp playerName playerGpci
     array(
         'match'     => '/^\[joinipgpci\] (\d+) ([^\s]+) ([^\s]+) ([^\s]+)$/',
@@ -138,13 +131,6 @@ $format = array(
         'prefix'    => '%'
     ),
 
-    // [regular] playerName playerId message
-    array(
-        'match'     => '/^\[regular\] ([^\s]+) (\d+) ?(.*)$/',
-        'format'    => '12Regular Chat 2[\2] 07\1: \3',
-        'prefix'    => '+'
-    ),
-
     // [vipchat] playerName playerId message
     array(
         'match'     => '/^\[vipchat\] ([^\s]+) (\d+) ?(.*)$/',
@@ -165,7 +151,7 @@ $format = array(
         'prefix'    => '%'
     ),
 
-    // [report] playerName playerId suspectedPlayer cheatReason
+    // [report] playerName playerId reportedPlayerName reportedPlayerId reason
     array(
         'match'     => '/^\[report\] ([^\s]+) (\d+) ([^\s]+) (\d+) *(.*)$/',
         'format'    => '2*** 7Report \1 (Id:\2): Player: \3 (Id:\4) - Reason: \5',
@@ -277,20 +263,6 @@ $format = array(
     array(
         'match'     => '/^\[announce\] (.+)$/',
         'format'    => '10*** \1'
-    ),
-
-    // [withdraw] playerId playerName amount
-    array(
-        'match'     => '/^\[withdraw\] (\d+) ([^\s]+) (\d+)$/',
-        'format'    => '', // already covered by the admin message.
-        'prefix'    => '%'
-    ),
-
-    // [moneyt] [TkW]Shade 16 1000000 eF.HoodyFnH 0
-    array(
-        'match'     => '/^\[moneyt\] ([^\s]+) (\d+) (\d+) ([^\s]+) (\d+)$/',
-        'format'    => '', // already covered by the admin message, although it misses the IDs.
-        'prefix'    => '%'
     ),
 
     // ---------------------------------------------------------------------------------------------
