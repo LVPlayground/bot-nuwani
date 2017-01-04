@@ -38,41 +38,53 @@ class MessageFormatter {
         $messageFeed = null;
 
         foreach (self::$m_format as $rule) {
-            if (preg_match($rule['match'], $message, $matches) != 1)
+            if (preg_match($rule['match'], $message, $matches) != 1){
                 continue;
+            }
             
             // We found the right rule. Now apply it in the way the rule desires. We support
             // various kinds of rules to ensure the flexibility we unfortunately require.
-            if (isset($rule['format']))
+            if (isset($rule['format'])) {
                 $message = preg_replace($rule['match'], $rule['format'], $message);
-            else if (isset($rule['function']))
+            }
+            else if (isset($rule['function'])) {
                 $message = preg_replace_callback($rule['match'], $rule['function'], $message);
+            }
             
             // See if we need to send the result to another feed.
             if (isset($rule['message-feed'])) {
                 $messageFeed = $rule['message-feed'];
-                break;
+                return self::createMessageDefinition($destination, $prefix, $message, $messageFeed);
             }
 
             // Call the event associated with this rule if there is any.
-            if (isset($rule['event']))
+            if (isset($rule['event'])) {
                 call_user_func_array(array($eventListener, $rule['event']), array($matches));
+            }
 
             // Now apply the modifiers which we make available for the rules.
-            if (isset($rule['prefix']))
+            if (isset($rule['prefix'])) {
                 $prefix = $rule['prefix'];
+            }
             
-            if (isset($rule['destination']))
+            if (isset($rule['destination'])) {
                 $destination = $rule['destination'];
+            }
             
 			// Should we block the message for a certain destination?
-			if (isset($rule['block-destination']) && self::isChannel($rule['block-destination'], $destination))
+			if (isset($rule['block-destination']) && self::isChannel($rule['block-destination'], $destination)) {
 				return null;
+            }
 			
             // We've applied the necessary styles to the rule -- break out of the loop.
-            break;
+            return self::createMessageDefinition($destination, $prefix, $message, $messageFeed);
         }
         
+        // No rule was matched, don't output the message.
+        return null;
+    }
+
+    private static function createMessageDefinition($destination, $prefix, $message, $messageFeed) {
         return array(
             'destination'  => $destination,
             'prefix'       => $prefix,
