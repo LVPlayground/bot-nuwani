@@ -132,7 +132,7 @@ class Commands {
                 return true;
 
             case 'lastbans':
-                if ($userLevel >= UserStatus::IsHalfOperator)
+                if (self::isRestrictedChannel($channel) && $userLevel >= UserStatus::IsHalfOperator)
                     self::OnLastBansCommand($bot, $parameters, $channel, $nickname);
                 return true;
 
