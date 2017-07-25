@@ -311,7 +311,7 @@ class BanManager {
                 user_nickname, user_id, subject_nickname, subject_user_id, description
             )
             VALUES (
-                NOW(), ?, ' . $valuesForQuery . ', FROM_UNIXTIME(?), ?, ?, ?, ?, ?
+                NOW(), ?, ' . $valuesForQuery . ', DATE_ADD(FROM_UNIXTIME(0), INTERVAL ? SECOND), ?, ?, ?, ?, ?
             )';
         $statement = $database->prepare($query);
         $userId    = $userProfile->exists() ? $userProfile['user_id'] : 0;
